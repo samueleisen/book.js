@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumina & Form — Interactive 3D Book Experience</title>
+  <meta name="description" content="A smooth, realistic 3D page-flip book experience built with vanilla HTML, CSS 3D transforms, and JavaScript.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Modular Design System & 3D CSS -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/book-3d.css">
+  <link rel="stylesheet" href="css/book-content.css">
+  <link rel="stylesheet" href="css/ui.css">
+</head>
+<body>
+  <!-- Ambient Scene Lighting & Background -->
+  <div class="ambient-scene">
+    <div class="lighting-glow"></div>
+    <div class="desk-surface"></div>
+  </div>
+
+  <!-- Main Application Container -->
+  <main class="app-container">
+    
+    <!-- Header / Brand & Minimal Status Bar -->
+    <header class="top-nav">
+      <div class="brand">
+        <span class="brand-monogram">❦</span>
+        <span class="brand-title">Lumina &amp; Form</span>
+        <span class="brand-subtitle">Special Folio Edition</span>
+      </div>
+
+      <div class="quick-tools">
+        <button id="tocToggleBtn" class="tool-btn" title="Table of Contents" aria-label="Table of Contents">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          <span>Contents</span>
+        </button>
+        <button id="soundToggleBtn" class="tool-btn" title="Toggle Page Flip Sound" aria-label="Toggle Flip Sound">
+          <svg class="sound-on-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          <svg class="sound-off-icon hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+          <span class="sound-label">Sound</span>
+        </button>
+        <button id="autoPlayBtn" class="tool-btn" title="Auto Turn Pages" aria-label="Auto Flip">
+          <svg class="play-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          <svg class="pause-icon hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+          <span class="play-label">Auto</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Table of Contents Slideout Drawer -->
+    <aside id="tocDrawer" class="toc-drawer" aria-hidden="true">
+      <div class="toc-header">
+        <h3>Index of Chapters</h3>
+        <button id="tocCloseBtn" class="close-btn" aria-label="Close Table of Contents">&times;</button>
+      </div>
+      <ul class="toc-list" id="tocList">
+        <li data-target-page="0" class="active"><span>Cover</span><span class="toc-pg">I</span></li>
+        <li data-target-page="1"><span>Title &amp; Frontispiece</span><span class="toc-pg">1</span></li>
+        <li data-target-page="2"><span>Prologue: Light &amp; Silence</span><span class="toc-pg">2</span></li>
+        <li data-target-page="3"><span>Chapter I: The Architecture of Memory</span><span class="toc-pg">4</span></li>
+        <li data-target-page="4"><span>Chapter II: Poetics of Space</span><span class="toc-pg">6</span></li>
+        <li data-target-page="5"><span>Epilogue &amp; Colophon</span><span class="toc-pg">8</span></li>
+        <li data-target-page="6"><span>Back Cover</span><span class="toc-pg">Fin</span></li>
+      </ul>
+    </aside>
+
+    <!-- Book Stage (3D Perspective Viewport) -->
+    <div class="book-stage" id="bookStage">
+      
+      <!-- Ambient Under-Book Shadow -->
+      <div class="book-desk-shadow" id="bookDeskShadow"></div>
+
+      <!-- The 3D Book Container -->
+      <div class="book" id="book">
+
+        <!-- Central Spine Crease & Depth Simulation -->
+        <div class="book-spine-crease"></div>
+
+        <!-- ==============================================
+             SHEET 0: FRONT COVER (Front) / INSIDE COVER (Back)
+             ============================================== -->
+        <div class="page-sheet" data-sheet="0" id="sheet-0">
+          <!-- Front Face: Hardcover with Gold Foil & Embossed Frame -->
+          <div class="face front face-cover" id="page-cover">
+            <div class="cover-inner-border">
+              <div class="cover-corner top-left"></div>
+              <div class="cover-corner top-right"></div>
+              <div class="cover-corner bottom-left"></div>
+              <div class="cover-corner bottom-right"></div>
+
+              <div class="cover-content">
+                <div class="cover-motif">
+                  <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/>
+                    <circle cx="50" cy="50" r="36" stroke="currentColor" stroke-width="1"/>
+                    <polygon points="50,18 58,42 82,50 58,58 50,82 42,58 18,50 42,42" fill="currentColor" opacity="0.85"/>
+                    <circle cx="50" cy="50" r="5" fill="#f5d77f"/>
+                  </svg>
+                </div>
+                <h1 class="cover-title">LUMINA<br><span class="title-amp">&amp;</span> FORM</h1>
+                <div class="cover-divider"></div>
+                <p class="cover-subtitle">ESSAYS ON ARCHITECTURE, LIGHT, AND THE POETICS OF SILENT SPACES</p>
+                <div class="cover-author">MARCUS V. AURELIUS</div>
+                <div class="cover-press">VERITAS &bull; ATELIER PRESS &bull; MCMXXVI</div>
+              </div>
+            </div>
+
+            <!-- Click hint & corner curl cue -->
+            <div class="corner-fold-hint right-hint" title="Click to open book">
+              <span class="fold-triangle"></span>
+            </div>
+            <!-- Dynamic flip shadow overlay -->
+            <div class="face-lighting-overlay"></div>
+          </div>
+
+          <!-- Back Face: Inside Front Cover & Ex Libris Bookplate -->
+          <div class="face back face-inside-cover" id="page-ex-libris">
+            <div class="marbled-pattern-bg"></div>
+            <div class="bookplate-card">
+              <div class="bookplate-header">EX LIBRIS</div>
+              <div class="bookplate-crest">❦</div>
+              <div class="bookplate-text">From the Private Library of</div>
+              <div class="bookplate-name">The Connoisseur</div>
+              <div class="bookplate-rule"></div>
+              <div class="bookplate-number">Copy № 142 of 500</div>
+            </div>
+            <div class="spine-shading left-spine"></div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+        </div>
+
+        <!-- ==============================================
+             SHEET 1: TITLE PAGE (Front) / PROLOGUE LEFT (Back)
+             ============================================== -->
+        <div class="page-sheet" data-sheet="1" id="sheet-1">
+          <!-- Front Face: Elegant Title Page -->
+          <div class="face front face-paper" id="page-title">
+            <div class="paper-content title-page-layout">
+              <div class="colophon-header">FOLIO SERIES &bull; VOL. IV</div>
+              <h2 class="title-page-head">LUMINA &amp; FORM</h2>
+              <div class="title-ornament">❖ ❖ ❖</div>
+              <p class="title-epigraph">
+                "Light creates room; shadow defines mystery. Between the two lies the entire territory of human dwelling."
+              </p>
+              <div class="title-meta">
+                <span>Composed in Garamond</span>
+                <span>Hand-bound in Brussels Linen</span>
+                <span>Autumn Edition</span>
+              </div>
+              <div class="page-footer">
+                <span class="folio-num">1</span>
+              </div>
+            </div>
+            <div class="spine-shading right-spine"></div>
+            <div class="corner-fold-hint right-hint" title="Next page">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+
+          <!-- Back Face: Prologue (Left Page) -->
+          <div class="face back face-paper" id="page-prologue-1">
+            <div class="paper-content editorial-page-layout">
+              <div class="running-head">
+                <span class="running-head-left">PROLOGUE</span>
+                <span class="running-head-center">LUMINA &amp; FORM</span>
+              </div>
+
+              <div class="body-text">
+                <p class="lead-paragraph">
+                  <span class="drop-cap">T</span>here is a moment when the afternoon light withdraws from stone, not through departure, but through transformation. The wall ceases to be a barrier and becomes a reservoir of warmth, holding within its microscopic fissures the slow radiation of hours gone by.
+                </p>
+                <p>
+                  To design with light is to comprehend that illumination is never passive. It is an active architect of perception. A room illuminated uniformly with merciless radiance offers no haven for the mind; it exhausts the eye and flattens contemplation.
+                </p>
+                <blockquote class="pull-quote">
+                  "Architecture is the learned game, correct and magnificent, of forms assembled in the light."
+                </blockquote>
+                <p>
+                  Consider the monasteries of the Cistercian order, erected in the twelfth century across secluded valleys of Burgundy. The builders renounced all ornamentation—no carved capitals, no polychrome glass, no gold leaf. Instead, they built exclusively with proportions and the sun.
+                </p>
+              </div>
+
+              <div class="page-footer">
+                <span class="folio-num">2</span>
+              </div>
+            </div>
+            <div class="spine-shading left-spine"></div>
+            <div class="corner-fold-hint left-hint" title="Previous page">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+        </div>
+
+        <!-- ==============================================
+             SHEET 2: PROLOGUE RIGHT (Front) / CHAPTER I LEFT (Back)
+             ============================================== -->
+        <div class="page-sheet" data-sheet="2" id="sheet-2">
+          <!-- Front Face: Prologue Right with SVG Architectural Study -->
+          <div class="face front face-paper" id="page-prologue-2">
+            <div class="paper-content editorial-page-layout">
+              <div class="running-head">
+                <span class="running-head-center">THE VALUE OF PENUMBRA</span>
+                <span class="running-head-right">ESSAYS</span>
+              </div>
+
+              <div class="body-text">
+                <div class="arch-diagram-wrapper">
+                  <svg class="arch-svg" viewBox="0 0 320 180" fill="none">
+                    <rect x="10" y="10" width="300" height="160" stroke="#8b7355" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.6"/>
+                    <!-- Golden section spiral & study -->
+                    <line x1="120" y1="10" x2="120" y2="170" stroke="#8b7355" stroke-width="0.6" stroke-dasharray="4 2"/>
+                    <line x1="10" y1="110" x2="310" y2="110" stroke="#8b7355" stroke-width="0.6" stroke-dasharray="4 2"/>
+                    <circle cx="120" cy="110" r="45" stroke="#2c3e50" stroke-width="1.2"/>
+                    <!-- Ray of light hitting chamber -->
+                    <path d="M20,20 L120,110 L280,160" stroke="#d4af37" stroke-width="1.4" opacity="0.85"/>
+                    <polygon points="120,110 270,110 270,160 120,160" fill="#2c3e50" fill-opacity="0.06"/>
+                    <text x="130" y="135" font-family="'Cormorant Garamond', serif" font-size="11" fill="#4a3e30" font-style="italic">Fig. 1 — The Sanctuary Aperture</text>
+                    <text x="25" y="45" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" fill="#888" letter-spacing="1">ANGLE OF ZENITH &theta; = 34.2&deg;</text>
+                  </svg>
+                </div>
+
+                <p>
+                  In the morning, the east clerestory admitted a slender blade of cool daylight that struck the limestone floor like an incised line. As the hour drifted towards noon, this luminous blade softened into an ambient glow, enveloping the choir in stillness.
+                </p>
+                <p>
+                  Modern spaces frequently suffer from an excess of visibility. We have conquered darkness to such an extent that shadow has become rare, and with its disappearance we have lost the very contrast that endows materiality with soul.
+                </p>
+              </div>
+
+              <div class="page-footer">
+                <span class="folio-num">3</span>
+              </div>
+            </div>
+            <div class="spine-shading right-spine"></div>
+            <div class="corner-fold-hint right-hint" title="Next page">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+
+          <!-- Back Face: Chapter I (Left Page) -->
+          <div class="face back face-paper" id="page-chap1-left">
+            <div class="paper-content editorial-page-layout">
+              <div class="running-head">
+                <span class="running-head-left">CHAPTER I</span>
+                <span class="running-head-center">THE ARCHITECTURE OF MEMORY</span>
+              </div>
+
+              <div class="chapter-badge">I</div>
+              <h3 class="chapter-headline">The Stone That Remembers</h3>
+
+              <div class="body-text">
+                <p class="lead-paragraph">
+                  <span class="drop-cap">E</span>very masonry wall is a clock that ticks in centuries rather than seconds. When we lay our palms against travertine or rough-hewn granite, what we perceive is not merely temperature, but the accumulated weight of endurance.
+                </p>
+                <p>
+                  The ancient Roman architect knew that stone absorbs more than sunlight—it absorbs human movement. Over centuries, steps hollow out in gentle arcs where thousands of sandals have passed. These hollows are not flaws; they are the physical inscription of human presence.
+                </p>
+                <div class="callout-box">
+                  <div class="callout-title">Principles of Tactile Presence</div>
+                  <p>1. Honesty of joints: Let the seam remain visible, celebrating how parts become whole.</p>
+                  <p>2. Weathering as grace: Choose materials that grow more noble under rain and friction.</p>
+                </div>
+              </div>
+
+              <div class="page-footer">
+                <span class="folio-num">4</span>
+              </div>
+            </div>
+            <div class="spine-shading left-spine"></div>
+            <div class="corner-fold-hint left-hint" title="Previous page">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+        </div>
+
+        <!-- ==============================================
+             SHEET 3: CHAPTER I RIGHT (Front) / CHAPTER II LEFT (Back)
+             ============================================== -->
+        <div class="page-sheet" data-sheet="3" id="sheet-3">
+          <!-- Front Face: Chapter I Right -->
+          <div class="face front face-paper" id="page-chap1-right">
+            <div class="paper-content editorial-page-layout">
+              <div class="running-head">
+                <span class="running-head-center">HONESTY OF JOINTS</span>
+                <span class="running-head-right">CHAPTER I</span>
+              </div>
+
+              <div class="body-text">
+                <p>
+                  Contrast this with our contemporary obsession with seamless finishes. Synthetic polymers and composite cladding promise surfaces that never age, never chip, never show the touch of a human hand.
+                </p>
+                <p>
+                  Yet in denying the passage of time, these surfaces also deny their own mortality. They do not age; they merely deteriorate. When chipped, they reveal no noble core—only disappointment.
+                </p>
+
+                <div class="quote-card">
+                  <div class="quote-symbol">“</div>
+                  <p class="quote-text">A room that does not welcome shadow cannot house the dreaming mind.</p>
+                  <div class="quote-author">— J. Pallasmaa, *The Eyes of the Skin*</div>
+                </div>
+
+                <p>
+                  We must return to an architecture of vulnerability: unvarnished oak that records the oil of fingertips, brass door handles that tarnish where held, and lime plasters that breathe with the changing humidity of the seasons.
+                </p>
+              </div>
+
+              <div class="page-footer">
+                <span class="folio-num">5</span>
+              </div>
+            </div>
+            <div class="spine-shading right-spine"></div>
+            <div class="corner-fold-hint right-hint" title="Next page">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+
+          <!-- Back Face: Chapter II (Left Page) -->
+          <div class="face back face-paper" id="page-chap2-left">
+            <div class="paper-content editorial-page-layout">
+              <div class="running-head">
+                <span class="running-head-left">CHAPTER II</span>
+                <span class="running-head-center">POETICS OF SPACE</span>
+              </div>
+
+              <div class="chapter-badge">II</div>
+              <h3 class="chapter-headline">The Threshold &amp; The Hearth</h3>
+
+              <div class="body-text">
+                <p class="lead-paragraph">
+                  <span class="drop-cap">T</span>he threshold is the most profound boundary in human geography. It is where the public sphere collapses into intimacy, where noise softens into quietude, and where the traveler becomes a resident.
+                </p>
+                <p>
+                  In traditional Japanese sukiya architecture, the entrance (genkan) is slightly recessed, demanding a deliberate pause. One steps down, removes shoes, and steps up onto cedar boards. This physical descent and elevation is a psychological cleansing.
+                </p>
+                <div class="mini-sketch">
+                  <svg viewBox="0 0 280 70" fill="none">
+                    <line x1="20" y1="50" x2="90" y2="50" stroke="#7a6953" stroke-width="1.5"/>
+                    <line x1="90" y1="50" x2="90" y2="35" stroke="#7a6953" stroke-width="1.5"/>
+                    <line x1="90" y1="35" x2="260" y2="35" stroke="#7a6953" stroke-width="1.5"/>
+                    <text x="35" y="42" font-family="'Cormorant Garamond', serif" font-size="10" fill="#888">External Ground</text>
+                    <text x="140" y="27" font-family="'Cormorant Garamond', serif" font-size="10" fill="#333">Sanctuary Floor (+150mm)</text>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="page-footer">
+                <span class="folio-num">6</span>
+              </div>
+            </div>
+            <div class="spine-shading left-spine"></div>
+            <div class="corner-fold-hint left-hint" title="Previous page">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+        </div>
+
+        <!-- ==============================================
+             SHEET 4: CHAPTER II RIGHT (Front) / EPILOGUE LEFT (Back)
+             ============================================== -->
+        <div class="page-sheet" data-sheet="4" id="sheet-4">
+          <!-- Front Face: Chapter II Right -->
+          <div class="face front face-paper" id="page-chap2-right">
+            <div class="paper-content editorial-page-layout">
+              <div class="running-head">
+                <span class="running-head-center">THE HEARTH OF CONTEMPLATION</span>
+                <span class="running-head-right">CHAPTER II</span>
+              </div>
+
+              <div class="body-text">
+                <p>
+                  And what of the hearth? It is the anchor around which human storytelling first condensed. When the open fire was replaced by central heating and radiator pipes, we gained convenience, but lost the communal focal point.
+                </p>
+                <p>
+                  A genuine hearth is not merely a provider of thermal comfort. It is an ocular gravitational center. Its flickering embers offer an ever-changing geometry that stills the agitated thoughts of the day.
+                </p>
+                <p>
+                  To design a dwelling without a contemplative center is to construct an airport concourse rather than a home. We must reclaim sanctuaries of stillness where light, timber, and silence converse freely.
+                </p>
+                <div class="section-ending-flourish">❦ &nbsp; ❦ &nbsp; ❦</div>
+              </div>
+
+              <div class="page-footer">
+                <span class="folio-num">7</span>
+              </div>
+            </div>
+            <div class="spine-shading right-spine"></div>
+            <div class="corner-fold-hint right-hint" title="Next page">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+
+          <!-- Back Face: Epilogue & Colophon (Left Page) -->
+          <div class="face back face-paper" id="page-epilogue">
+            <div class="paper-content colophon-layout">
+              <div class="running-head">
+                <span class="running-head-left">EPILOGUE</span>
+                <span class="running-head-center">COLOPHON</span>
+              </div>
+
+              <h4 class="colophon-title">A NOTE ON THE CRAFT</h4>
+              <p class="colophon-para">
+                This digital volume was composed with utmost dedication to classical bibliophilic proportions and smooth 3D spatial transformations.
+              </p>
+              
+              <div class="colophon-specs">
+                <div class="spec-row">
+                  <span class="spec-label">Typography</span>
+                  <span class="spec-val">Cinzel &bull; Cormorant Garamond</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">Paper Tone</span>
+                  <span class="spec-val">Vellum Ivory (#FAF7F2)</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">Audio Synth</span>
+                  <span class="spec-val">Web Audio API Paper Impulses</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">Engine</span>
+                  <span class="spec-val">Vanilla HTML5 &bull; CSS3 3D</span>
+                </div>
+              </div>
+
+              <div class="printer-mark">
+                <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+                  <circle cx="50" cy="50" r="40" stroke="#7a6953" stroke-width="2"/>
+                  <line x1="50" y1="15" x2="50" y2="85" stroke="#7a6953" stroke-width="1.5"/>
+                  <line x1="25" y1="40" x2="75" y2="40" stroke="#7a6953" stroke-width="1.5"/>
+                  <circle cx="50" cy="50" r="10" fill="#7a6953"/>
+                </svg>
+              </div>
+
+              <div class="page-footer">
+                <span class="folio-num">8</span>
+              </div>
+            </div>
+            <div class="spine-shading left-spine"></div>
+            <div class="corner-fold-hint left-hint" title="Previous page">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+        </div>
+
+        <!-- ==============================================
+             SHEET 5: BACK COVER INSIDE (Front) / BACK COVER OUTSIDE (Back)
+             ============================================== -->
+        <div class="page-sheet" data-sheet="5" id="sheet-5">
+          <!-- Front Face: Inside Back Cover (Left Spread when open before closing) -->
+          <div class="face front face-inside-cover" id="page-back-inside">
+            <div class="marbled-pattern-bg"></div>
+            <div class="inside-back-note">
+              <div class="finish-symbol">❖</div>
+              <div class="finish-text">FINIS</div>
+              <div class="finish-sub">Printed in the Year MMXXVI</div>
+            </div>
+            <div class="spine-shading right-spine"></div>
+            <div class="corner-fold-hint right-hint" title="Close book">
+              <span class="fold-triangle"></span>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+
+          <!-- Back Face: Hardcover Outside Back -->
+          <div class="face back face-cover back-cover" id="page-back-cover">
+            <div class="cover-inner-border">
+              <div class="cover-corner top-left"></div>
+              <div class="cover-corner top-right"></div>
+              <div class="cover-corner bottom-left"></div>
+              <div class="cover-corner bottom-right"></div>
+
+              <div class="back-cover-content">
+                <div class="back-cover-emblem">❦</div>
+                <h3 class="back-cover-quote">
+                  "Architecture is frozen music, and light is the conductor that guides its timeless melody."
+                </h3>
+                <div class="back-cover-divider"></div>
+                <div class="isbn-barcode">
+                  <div class="barcode-lines"></div>
+                  <div class="isbn-number">ISBN 978-0-1926-8841-0</div>
+                </div>
+              </div>
+            </div>
+            <div class="face-lighting-overlay"></div>
+          </div>
+        </div>
+
+      </div><!-- /.book -->
+
+      <!-- Navigation Arrows Floating on Sides of the Book -->
+      <button class="stage-nav-btn prev-btn" id="prevStageBtn" aria-label="Previous Page" title="Previous (Left Arrow)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <button class="stage-nav-btn next-btn" id="nextStageBtn" aria-label="Next Page" title="Next (Right Arrow or Space)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+    </div><!-- /.book-stage -->
+
+    <!-- Bottom Controls & Scrub Slider Dock -->
+    <footer class="bottom-dock">
+      <div class="dock-inner">
+        <!-- Prev Button -->
+        <button id="dockPrevBtn" class="dock-nav-btn" aria-label="Turn Previous Page">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Prev</span>
+        </button>
+
+        <!-- Scrub Slider & Location Indicator -->
+        <div class="dock-scrubber">
+          <span class="location-badge" id="locationBadge">Cover</span>
+          <div class="slider-wrapper">
+            <input type="range" id="pageSlider" min="0" max="6" value="0" step="1" aria-label="Book page slider">
+            <div class="slider-track-fill" id="sliderTrackFill"></div>
+          </div>
+          <span class="pages-total" id="pagesTotalLabel">Sheet 0 of 6</span>
+        </div>
+
+        <!-- Next Button -->
+        <button id="dockNextBtn" class="dock-nav-btn" aria-label="Turn Next Page">
+          <span>Next</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+      <!-- Quick Hint Bar -->
+      <div class="interaction-hints">
+        <span>Click page or corners to flip</span> &bull; 
+        <span><kbd>&larr;</kbd> <kbd>&rarr;</kbd> Keys</span> &bull; 
+        <span>Smooth 3D Perspective</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Modular ES6 Entry Point -->
+  <script type="module" src="book.js"></script>
+</body>
+</html>
