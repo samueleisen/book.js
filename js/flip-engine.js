@@ -19,12 +19,17 @@ export class FlipEngine {
     this.flippingSheets = new Set();
     this.sheetTimeouts = new Map();
     this.inFlightCounter = 0;
+    this.cascadeInterval = null;
 
     this.init();
   }
 
   get isFlipping() {
     return this.flippingSheets.size > 0;
+  }
+
+  get isCascading() {
+    return this.cascadeInterval !== null;
   }
 
   init() {
@@ -151,10 +156,12 @@ export class FlipEngine {
       let currentStep = 0;
       const intervalMs = Math.max(70, Math.floor(350 / distance));
 
-      this.cascadeInterval = setInterval(() => {
+      const tick = () => {
         if (this.currentLocation === targetLocation || currentStep >= distance) {
-          clearInterval(this.cascadeInterval);
-          this.cascadeInterval = null;
+          if (this.cascadeInterval) {
+            clearInterval(this.cascadeInterval);
+            this.cascadeInterval = null;
+          }
           return;
         }
 
@@ -165,7 +172,18 @@ export class FlipEngine {
         }
 
         currentStep++;
-      }, intervalMs);
+
+        if (this.currentLocation === targetLocation || currentStep >= distance) {
+          if (this.cascadeInterval) {
+            clearInterval(this.cascadeInterval);
+            this.cascadeInterval = null;
+          }
+        }
+      };
+
+      // Set interval and fire initial step immediately for instant response
+      this.cascadeInterval = setInterval(tick, intervalMs);
+      tick();
     }
   }
 

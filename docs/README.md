@@ -16,6 +16,7 @@ Welcome to the comprehensive technical documentation for the **Lumina & Form** i
 | **[Customization & Extension Cookbook](customization-guide.md)** | Step-by-step instructions for adding sheets, editing content, attaching new markers, adjusting typography, and changing themes. |
 | **[API Reference Specification](api-reference.md)** | Exhaustive class interfaces, methods, constructor parameters, return values, events, and global debugging hooks. |
 | **[Troubleshooting & CSS 3D Pitfalls](troubleshooting-and-pitfalls.md)** | Analysis of common 3D rendering traps (CSS `filter` flattening, inverted Z-axes in flipped space, stacking context race conditions). |
+| **[Filler Sheets & Procedural Fantasy Mess](filler-sheets-and-fantasy-mess.md)** | Rationale, generator architecture, and replacement guide for temporary procedural filler content avoiding empty paper. |
 
 ---
 

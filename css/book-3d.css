@@ -95,33 +95,33 @@
   will-change: transform;
 }
 
-/* Hardcover Boards (Sheet 0 & Sheet 19) Full Height & Fore-Edge Overhang */
+/* Hardcover Boards (Sheet 0 & Sheet 16) Full Height & Fore-Edge Overhang */
 .page-sheet#sheet-0,
-.page-sheet#sheet-19 {
+.page-sheet#sheet-16 {
   top: 0;
   height: var(--book-height);
   width: var(--cover-width);
 }
 
-/* Tier 1 Paper Leaves (Sheet 1 & Sheet 18): -8px in Y axis (4px top/bottom) */
+/* Tier 1 Paper Leaves (Sheet 1 & Sheet 15): -8px in Y axis (4px top/bottom) */
 .page-sheet#sheet-1,
-.page-sheet#sheet-18 {
+.page-sheet#sheet-15 {
   width: var(--flyleaf-width);
   top: var(--flyleaf-top);
   height: var(--flyleaf-height);
 }
 
-/* Tier 2 Paper Leaves (Sheet 2 & Sheet 17): -6px in Y axis (3px top/bottom) */
+/* Tier 2 Paper Leaves (Sheet 2 & Sheet 14): -6px in Y axis (3px top/bottom) */
 .page-sheet#sheet-2,
-.page-sheet#sheet-17 {
+.page-sheet#sheet-14 {
   width: var(--tier2-width);
   top: var(--tier2-top);
   height: var(--tier2-height);
 }
 
-/* Tier 3 Paper Leaves (Sheet 3 & Sheet 16): -4px in Y axis (2px top/bottom) */
+/* Tier 3 Paper Leaves (Sheet 3 & Sheet 13): -4px in Y axis (2px top/bottom) */
 .page-sheet#sheet-3,
-.page-sheet#sheet-16 {
+.page-sheet#sheet-13 {
   width: var(--tier3-width);
   top: var(--tier3-top);
   height: var(--tier3-height);
@@ -133,7 +133,7 @@
   transform: translate3d(0, 0, 2px);
 }
 
-.book.state-closed-back #sheet-19 {
+.book.state-closed-back #sheet-16 {
   z-index: 120 !important;
   transform: translate3d(0, 0, 2px) rotateY(-180deg);
 }

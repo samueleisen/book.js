@@ -41,9 +41,10 @@ new FlipEngine({
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `currentLocation` | `number` | Integer index representing the active spread ($0 \le \text{location} \le \text{maxLocation}$). |
-| `totalSheets` | `number` | Total count of `.page-sheet` elements (30). |
-| `maxLocation` | `number` | Maximum reachable location index (equals `totalSheets` = 30). |
+| `totalSheets` | `number` | Total count of `.page-sheet` elements (17). |
+| `maxLocation` | `number` | Maximum reachable location index (equals `totalSheets` = 17). |
 | `isFlipping` | `boolean` | Read-only getter; `true` if any sheets are currently in mid-air (`flippingSheets.size > 0`). |
+| `isCascading` | `boolean` | Read-only getter; `true` if a multi-page skip or cascade is actively running (`cascadeInterval !== null`). |
 | `flippingSheets` | `Set<HTMLElement>` | Set tracking all sheets actively rotating in 3D space. |
 | `sheetTimeouts` | `Map<HTMLElement, number>`| Map storing active settle timer IDs for in-flight sheets. |
 | `cascadeInterval` | `number \| null` | Timer ID for multi-page jump cascades. |

@@ -28,11 +28,11 @@ export class BookUI {
     // Spread metadata mapping
     this.spreadNames = {
       0: 'Cover',
-      8: 'Title Page',
-      9: 'Prologue • Study',
-      10: 'Chapter I: Memory',
-      11: 'Chapter II: Space',
-      12: 'Epilogue • Finis'
+      6: 'Title Page',
+      7: 'Prologue • Study',
+      8: 'Chapter I: Memory',
+      9: 'Chapter II: Space',
+      10: 'Epilogue • Finis'
     };
 
     this.init();
@@ -65,7 +65,7 @@ export class BookUI {
       } else if (location === this.engine.maxLocation) {
         this.locationBadge.textContent = 'Back Cover';
       } else {
-        this.locationBadge.textContent = `Blank Page • Sheet ${location}`;
+        this.locationBadge.textContent = `Arcane Notes • Sheet ${location}`;
       }
     }
     if (this.pagesTotalLabel) {
@@ -110,7 +110,7 @@ export class BookUI {
       const sheetIdx = parseInt(titleSheet.getAttribute('data-sheet'), 10);
       if (!isNaN(sheetIdx)) return sheetIdx;
     }
-    return 8;
+    return 6;
   }
 
   getEpilogueLocation() {
@@ -126,10 +126,12 @@ export class BookUI {
       const sheetIdx = parseInt(epilogueFace.getAttribute('data-sheet'), 10);
       if (!isNaN(sheetIdx)) return sheetIdx + 1;
     }
-    return 12;
+    return 10;
   }
 
   handleForward() {
+    if (this.engine.isCascading) return;
+
     // 1. From closed front cover (sheet 0), right flip immediately cascades to the Title Page
     if (this.engine.currentLocation === 0) {
       const target = this.getTitlePageLocation();
@@ -144,6 +146,8 @@ export class BookUI {
   }
 
   handleBackward() {
+    if (this.engine.isCascading) return;
+
     // 1. From Title Page, left flip immediately cascades back to closed front cover
     if (this.engine.currentLocation === this.getTitlePageLocation()) {
       this.engine.goToLocation(0);
@@ -166,6 +170,7 @@ export class BookUI {
     // Slider Scrubber
     if (this.pageSlider) {
       this.pageSlider.addEventListener('input', (e) => {
+        if (this.engine.isCascading) return;
         const target = parseInt(e.target.value, 10);
         this.engine.goToLocation(target);
       });
@@ -177,6 +182,8 @@ export class BookUI {
       bookEl.addEventListener('click', (e) => {
         const marker = e.target.closest('.page-marker');
         if (!marker) return;
+
+        if (this.engine.isCascading) return;
 
         const parentSheet = marker.closest('.page-sheet');
         if (this.engine.flippingSheets && this.engine.flippingSheets.has(parentSheet)) {
@@ -197,6 +204,7 @@ export class BookUI {
     // Direct Clicks on Page Sheets
     this.engine.sheets.forEach((sheet, index) => {
       sheet.addEventListener('click', (e) => {
+        if (this.engine.isCascading) return;
         if (e.target.closest('.toc-drawer') || e.target.closest('.page-marker')) return;
 
         // Click right page -> flip forward (from cover, cascades to title page)
@@ -212,6 +220,13 @@ export class BookUI {
 
     // Keyboard Shortcuts
     window.addEventListener('keydown', (e) => {
+      if (this.engine.isCascading) {
+        if (['ArrowRight', 'ArrowLeft', ' ', 'Home', 'End'].includes(e.key)) {
+          e.preventDefault();
+        }
+        return;
+      }
+
       if (e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
         this.handleForward();
@@ -262,6 +277,7 @@ export class BookUI {
     // TOC Item Selection
     if (this.tocList) {
       this.tocList.addEventListener('click', (e) => {
+        if (this.engine.isCascading) return;
         const li = e.target.closest('li');
         if (!li) return;
         const targetPage = parseInt(li.getAttribute('data-target-page'), 10);

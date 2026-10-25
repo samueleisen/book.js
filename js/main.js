@@ -7,11 +7,15 @@ import { BookAudio } from './audio.js';
 import { FlipEngine } from './flip-engine.js';
 import { BookResponsive } from './responsive.js';
 import { BookUI } from './ui.js';
+import { populateBlankPages } from './fantasy-mess.js';
 
 export class BookApp {
   constructor() {
     this.bookElement = document.getElementById('book');
     this.sheets = document.querySelectorAll('.page-sheet');
+
+    // 0. Populate skipped flyleaves with chaotic fantasy mess & arcane symbols
+    populateBlankPages(this.bookElement);
 
     // 1. Audio synthesis
     this.audio = new BookAudio();

@@ -589,3 +589,30 @@
 .printer-mark {
   margin-top: 10px;
 }
+
+/* ==========================================================================
+   FANTASY MESS & ARCANE SYMBOLS (SKIPPED EMPTY SHEETS FILLER)
+   ========================================================================== */
+
+.fantasy-mess-layout {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.92;
+  transition: opacity 0.3s ease;
+}
+
+.fantasy-mess-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+

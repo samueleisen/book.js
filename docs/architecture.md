@@ -21,7 +21,7 @@ Key architectural pillars:
 
 ```
 book.js/
-├── index.html            # Main markup: 3D stage, 30 page sheets (60 faces) & page markers
+├── index.html            # Main markup: 3D stage, 17 page sheets (34 faces) & page markers
 ├── book.js               # Root module forwarding to js/main.js
 ├── styles.css            # Central CSS import manifest
 ├── css/
@@ -53,7 +53,7 @@ book.js/
 
 ## 3. DOM & Leaf Topology
 
-The book is structured as a 3D book container containing **20 `.page-sheet` elements** (index 0 to 19), resulting in **40 readable page faces**:
+The book is structured as a 3D book container containing **17 `.page-sheet` elements** (index 0 to 16), resulting in **34 readable page faces**:
 
 ```
 .book-stage (perspective: 2400px; transform-style: preserve-3d)
@@ -64,43 +64,46 @@ The book is structured as a 3D book container containing **20 `.page-sheet` elem
     │   ├── .face.front.face-cover (#page-cover: leather texture, gold foil, emblem)
     │   └── .face.back.face-inside-cover (#page-inside-front: marbled endpaper)
     │
-    ├── #sheet-1 to #sheet-7 [Opening Blank Flyleaves]
+    ├── #sheet-1 to #sheet-5 [Opening Blank Flyleaves]
     │   ├── .face.front.face-paper (.blank-page-layout)
     │   └── .face.back.face-paper (.blank-page-layout)
     │
-    ├── #sheet-8 [Title Page]
+    ├── #sheet-6 [Title Page]
     │   ├── .face.front.face-paper (#page-title: Title Page)
     │   ├── .face.back.face-paper (#page-prologue-1: Prologue Left)
-    │   └── .page-marker[data-target-page="8"] (TITL tab)
+    │   └── .page-marker[data-target-page="6"] (TITL tab)
     │
-    ├── #sheet-9 [Prologue]
+    ├── #sheet-7 [Prologue]
     │   ├── .face.front.face-paper (#page-prologue-2: Architectural study diagram)
     │   ├── .face.back.face-paper (#page-chap1-left: Chapter I Left)
-    │   └── .page-marker[data-target-page="9"] (PROL tab)
+    │   └── .page-marker[data-target-page="7"] (PROL tab)
     │
-    ├── #sheet-10 [Chapter I: Memory]
+    ├── #sheet-8 [Chapter I: Memory]
     │   ├── .face.front.face-paper (#page-chap1-right: Chapter I Right)
     │   ├── .face.back.face-paper (#page-chap2-left: Chapter II Left)
-    │   └── .page-marker[data-target-page="10"] (CH.I tab)
+    │   └── .page-marker[data-target-page="8"] (CH.I tab)
     │
-    ├── #sheet-11 [Chapter II: Space]
+    ├── #sheet-9 [Chapter II: Space]
     │   ├── .face.front.face-paper (#page-chap2-right: Chapter II Right)
     │   ├── .face.back.face-paper (#page-colophon: Colophon & Notes)
-    │   └── .page-marker[data-target-page="11"] (CH.II tab)
+    │   └── .page-marker[data-target-page="9"] (CH.II tab)
     │
-    ├── #sheet-12 [Epilogue / Flyleaf]
+    ├── #sheet-10 [Epilogue / Flyleaf]
     │   ├── .face.front.face-paper (.blank-page-layout)
     │   ├── .face.back.face-paper (.blank-page-layout)
-    │   └── .page-marker[data-target-page="12"] (EPIL tab)
+    │   └── .page-marker[data-target-page="10"] (EPIL tab)
     │
-    ├── #sheet-13 to #sheet-18 [Closing Blank Flyleaves]
+    ├── #sheet-11 to #sheet-15 [Closing Blank Flyleaves]
     │   ├── .face.front.face-paper (.blank-page-layout)
     │   └── .face.back.face-paper (.blank-page-layout)
     │
-    └── #sheet-19 [Back Cover Board]
+    └── #sheet-16 [Back Cover Board]
         ├── .face.front.face-inside-cover (#page-back-inside: FINIS note, marbled endpaper)
         └── .face.back.face-cover.back-cover (#page-back-cover: leather, gold foil, barcode)
 ```
+
+> [!NOTE]
+> All intermediate blank flyleaf containers (`.blank-page-layout` on Sheets 1–5, 10, and 11–15) are dynamically populated at runtime by `js/fantasy-mess.js` with procedural arcane symbols and fantasy scribbles to avoid empty paper. See [Filler Sheets & Procedural Fantasy Mess](filler-sheets-and-fantasy-mess.md) for full design rationale and replacement instructions.
 
 ---
 
@@ -111,11 +114,11 @@ The `.book` element applies dynamic centering via CSS classes depending on `curr
 ```mermaid
 stateDiagram-v2
     [*] --> ClosedFront: currentLocation = 0
-    ClosedFront --> OpenSpread: flipForward() cascades to 8 (Title)
-    OpenSpread --> ClosedFront: flipBackward() from 8 cascades to 0
-    OpenSpread --> OpenSpread: normal 1-by-1 flips (1..18)
-    OpenSpread --> ClosedBack: flipForward() from 12 cascades to 20
-    ClosedBack --> OpenSpread: flipBackward() cascades to 12 (Epilogue)
+    ClosedFront --> OpenSpread: flipForward() cascades to 6 (Title)
+    OpenSpread --> ClosedFront: flipBackward() from 6 cascades to 0
+    OpenSpread --> OpenSpread: normal 1-by-1 flips (1..15)
+    OpenSpread --> ClosedBack: flipForward() from 10 cascades to 17
+    ClosedBack --> OpenSpread: flipBackward() cascades to 10 (Epilogue)
 ```
 
 | State Class | Condition | Translation | Purpose |
