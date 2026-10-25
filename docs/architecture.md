@@ -53,7 +53,7 @@ book.js/
 
 ## 3. DOM & Leaf Topology
 
-The book is structured as a 3D book container containing **30 `.page-sheet` elements** (index 0 to 29), resulting in **60 readable page faces**:
+The book is structured as a 3D book container containing **20 `.page-sheet` elements** (index 0 to 19), resulting in **40 readable page faces**:
 
 ```
 .book-stage (perspective: 2400px; transform-style: preserve-3d)
@@ -64,40 +64,40 @@ The book is structured as a 3D book container containing **30 `.page-sheet` elem
     │   ├── .face.front.face-cover (#page-cover: leather texture, gold foil, emblem)
     │   └── .face.back.face-inside-cover (#page-inside-front: marbled endpaper)
     │
-    ├── #sheet-1 to #sheet-12 [Opening Blank Flyleaves]
+    ├── #sheet-1 to #sheet-7 [Opening Blank Flyleaves]
     │   ├── .face.front.face-paper (.blank-page-layout)
     │   └── .face.back.face-paper (.blank-page-layout)
     │
-    ├── #sheet-13 [Title Page]
+    ├── #sheet-8 [Title Page]
     │   ├── .face.front.face-paper (#page-title: Title Page)
     │   ├── .face.back.face-paper (#page-prologue-1: Prologue Left)
-    │   └── .page-marker[data-target-page="13"] (TITL tab)
+    │   └── .page-marker[data-target-page="8"] (TITL tab)
     │
-    ├── #sheet-14 [Prologue]
+    ├── #sheet-9 [Prologue]
     │   ├── .face.front.face-paper (#page-prologue-2: Architectural study diagram)
     │   ├── .face.back.face-paper (#page-chap1-left: Chapter I Left)
-    │   └── .page-marker[data-target-page="14"] (PROL tab)
+    │   └── .page-marker[data-target-page="9"] (PROL tab)
     │
-    ├── #sheet-15 [Chapter I: Memory]
+    ├── #sheet-10 [Chapter I: Memory]
     │   ├── .face.front.face-paper (#page-chap1-right: Chapter I Right)
     │   ├── .face.back.face-paper (#page-chap2-left: Chapter II Left)
-    │   └── .page-marker[data-target-page="15"] (CH.I tab)
+    │   └── .page-marker[data-target-page="10"] (CH.I tab)
     │
-    ├── #sheet-16 [Chapter II: Space]
+    ├── #sheet-11 [Chapter II: Space]
     │   ├── .face.front.face-paper (#page-chap2-right: Chapter II Right)
     │   ├── .face.back.face-paper (#page-colophon: Colophon & Notes)
-    │   └── .page-marker[data-target-page="16"] (CH.II tab)
+    │   └── .page-marker[data-target-page="11"] (CH.II tab)
     │
-    ├── #sheet-17 [Epilogue / Flyleaf]
+    ├── #sheet-12 [Epilogue / Flyleaf]
     │   ├── .face.front.face-paper (.blank-page-layout)
     │   ├── .face.back.face-paper (.blank-page-layout)
-    │   └── .page-marker[data-target-page="17"] (EPIL tab)
+    │   └── .page-marker[data-target-page="12"] (EPIL tab)
     │
-    ├── #sheet-18 to #sheet-28 [Closing Blank Flyleaves]
+    ├── #sheet-13 to #sheet-18 [Closing Blank Flyleaves]
     │   ├── .face.front.face-paper (.blank-page-layout)
     │   └── .face.back.face-paper (.blank-page-layout)
     │
-    └── #sheet-29 [Back Cover Board]
+    └── #sheet-19 [Back Cover Board]
         ├── .face.front.face-inside-cover (#page-back-inside: FINIS note, marbled endpaper)
         └── .face.back.face-cover.back-cover (#page-back-cover: leather, gold foil, barcode)
 ```
@@ -111,11 +111,11 @@ The `.book` element applies dynamic centering via CSS classes depending on `curr
 ```mermaid
 stateDiagram-v2
     [*] --> ClosedFront: currentLocation = 0
-    ClosedFront --> OpenSpread: flipForward() or goToLocation(13)
-    OpenSpread --> ClosedFront: flipBackward() to 0
-    OpenSpread --> OpenSpread: currentLocation in 1..28
-    OpenSpread --> ClosedBack: flipForward() to 30
-    ClosedBack --> OpenSpread: flipBackward() to 29
+    ClosedFront --> OpenSpread: flipForward() cascades to 8 (Title)
+    OpenSpread --> ClosedFront: flipBackward() from 8 cascades to 0
+    OpenSpread --> OpenSpread: normal 1-by-1 flips (1..18)
+    OpenSpread --> ClosedBack: flipForward() from 12 cascades to 20
+    ClosedBack --> OpenSpread: flipBackward() cascades to 12 (Epilogue)
 ```
 
 | State Class | Condition | Translation | Purpose |

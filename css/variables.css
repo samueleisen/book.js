@@ -39,9 +39,31 @@
   /* Book Geometry & Dimensions */
   --book-width: 760px;
   --page-width: 380px;
-  --cover-overhang: 16px;
+  --cover-overhang: 24px;
   --cover-width: calc(var(--page-width) + var(--cover-overhang));
+  --flyleaf-overhang: 12px;
+  --flyleaf-width: calc(var(--page-width) + var(--flyleaf-overhang));
+  --tier2-overhang: 8px;
+  --tier2-width: calc(var(--page-width) + var(--tier2-overhang));
+  --tier3-overhang: 4px;
+  --tier3-width: calc(var(--page-width) + var(--tier3-overhang));
   --book-height: 540px;
+  --paper-inset-y: 4px;
+  --paper-height: calc(var(--book-height) - (var(--paper-inset-y) * 2));
+
+  /* Tiered Y-axis Reductions */
+  --flyleaf-reduction-y: 12px;
+  --flyleaf-top: calc(var(--flyleaf-reduction-y) / 2);
+  --flyleaf-height: calc(var(--book-height) - var(--flyleaf-reduction-y));
+
+  --tier2-reduction-y: 10px;
+  --tier2-top: calc(var(--tier2-reduction-y) / 2);
+  --tier2-height: calc(var(--book-height) - var(--tier2-reduction-y));
+
+  --tier3-reduction-y: 8px;
+  --tier3-top: calc(var(--tier3-reduction-y) / 2);
+  --tier3-height: calc(var(--book-height) - var(--tier3-reduction-y));
+
   --book-scale: 1;
 
   /* Animation Physics */

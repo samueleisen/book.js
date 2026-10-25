@@ -122,7 +122,7 @@ Page markers must interact cleanly with the hardcover casing:
 2. **On Hover**: `.page-marker:hover { z-index: 24; }`
    * Pops forward over neighboring tabs on the same stack.
 3. **Cover Dominance**:
-   * When closed, `#sheet-0` and `#sheet-29` have `z-index: 120 !important;` and `transform: translate3d(0, 0, 2px)`.
+   * When closed, `#sheet-0` and `#sheet-19` have `z-index: 120 !important;` and `transform: translate3d(0, 0, 2px)`.
    * With `--cover-overhang: 16px`, the cover board is 396px wide, while paper sheets are 380px.
    * Tabs extend to $380 + 32 = 412\text{px}$.
    * Therefore, $412 - 396 = 16\text{px}$ of each tab protrudes cleanly beyond the leather cover board when closed.

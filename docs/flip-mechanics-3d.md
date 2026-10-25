@@ -99,8 +99,8 @@ When the book is fully closed, the exterior covers are guaranteed dominance over
   transform: translate3d(0, 0, 2px);
 }
 
-/* Back Cover Dominance when Closed (Location 30) */
-.book.state-closed-back #sheet-29 {
+/* Back Cover Dominance when Closed (Location 20) */
+.book.state-closed-back #sheet-19 {
   z-index: 120 !important;
   transform: translate3d(0, 0, 2px) rotateY(-180deg);
 }

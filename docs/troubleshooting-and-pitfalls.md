@@ -35,7 +35,7 @@ Never apply `filter` properties to any element in the 3D hierarchy. Achieve hove
 ## 2. The Inverted Z-Axis on Flipped Sheets
 
 ### Symptoms
-When closing the back cover (`#sheet-29`), the leather cover appeared to "sink" behind the flipped paper pages, rendering inner pages in front of the outside back cover.
+When closing the back cover (`#sheet-19`), the leather cover appeared to "sink" behind the flipped paper pages, rendering inner pages in front of the outside back cover.
 
 ### Root Cause
 When an element rotates around the Y-axis by $-180^\circ$ (`rotateY(-180deg)`), its local coordinate system inverts:
@@ -45,7 +45,7 @@ When an element rotates around the Y-axis by $-180^\circ$ (`rotateY(-180deg)`), 
 Writing:
 ```css
 /* BAD: translateZ(1px) pushes the flipped sheet AWAY from the camera */
-.book.state-closed-back #sheet-29 {
+.book.state-closed-back #sheet-19 {
   transform: rotateY(-180deg) translateZ(1px);
 }
 ```
@@ -55,7 +55,7 @@ Because the translation happened *after* the $-180^\circ$ rotation, it pushed th
 Apply the world-space translation **before** the rotation:
 ```css
 /* GOOD: Translates +2px towards camera in parent space, then rotates */
-.book.state-closed-back #sheet-29 {
+.book.state-closed-back #sheet-19 {
   z-index: 120 !important;
   transform: translate3d(0, 0, 2px) rotateY(-180deg);
 }

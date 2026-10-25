@@ -28,11 +28,11 @@ export class BookUI {
     // Spread metadata mapping
     this.spreadNames = {
       0: 'Cover',
-      13: 'Title Page',
-      14: 'Prologue • Study',
-      15: 'Chapter I: Memory',
-      16: 'Chapter II: Space',
-      17: 'Epilogue • Finis'
+      8: 'Title Page',
+      9: 'Prologue • Study',
+      10: 'Chapter I: Memory',
+      11: 'Chapter II: Space',
+      12: 'Epilogue • Finis'
     };
 
     this.init();
@@ -110,24 +110,57 @@ export class BookUI {
       const sheetIdx = parseInt(titleSheet.getAttribute('data-sheet'), 10);
       if (!isNaN(sheetIdx)) return sheetIdx;
     }
-    return 13;
+    return 8;
+  }
+
+  getEpilogueLocation() {
+    const epilMarker = Array.from(document.querySelectorAll('.page-marker')).find(m =>
+      m.querySelector('.marker-text')?.textContent.trim() === 'EPIL'
+    );
+    if (epilMarker) {
+      const page = parseInt(epilMarker.getAttribute('data-target-page'), 10);
+      if (!isNaN(page)) return page;
+    }
+    const epilogueFace = document.getElementById('page-epilogue')?.closest('.page-sheet');
+    if (epilogueFace) {
+      const sheetIdx = parseInt(epilogueFace.getAttribute('data-sheet'), 10);
+      if (!isNaN(sheetIdx)) return sheetIdx + 1;
+    }
+    return 12;
   }
 
   handleForward() {
-    // From closed front cover (sheet 0), right flip immediately cascades to the Title Page
+    // 1. From closed front cover (sheet 0), right flip immediately cascades to the Title Page
     if (this.engine.currentLocation === 0) {
       const target = this.getTitlePageLocation();
       this.engine.goToLocation(target);
+    }
+    // 2. From Epilogue, right flip immediately cascades to cleanly close the back cover
+    else if (this.engine.currentLocation === this.getEpilogueLocation()) {
+      this.engine.goToLocation(this.engine.maxLocation);
     } else {
       this.engine.flipForward();
     }
   }
 
+  handleBackward() {
+    // 1. From Title Page, left flip immediately cascades back to closed front cover
+    if (this.engine.currentLocation === this.getTitlePageLocation()) {
+      this.engine.goToLocation(0);
+    }
+    // 2. From closed back cover, left flip immediately cascades back to Epilogue
+    else if (this.engine.currentLocation === this.engine.maxLocation) {
+      this.engine.goToLocation(this.getEpilogueLocation());
+    } else {
+      this.engine.flipBackward();
+    }
+  }
+
   bindEvents() {
     // Navigation Button Clicks
-    if (this.prevStageBtn) this.prevStageBtn.addEventListener('click', () => this.engine.flipBackward());
+    if (this.prevStageBtn) this.prevStageBtn.addEventListener('click', () => this.handleBackward());
     if (this.nextStageBtn) this.nextStageBtn.addEventListener('click', () => this.handleForward());
-    if (this.dockPrevBtn) this.dockPrevBtn.addEventListener('click', () => this.engine.flipBackward());
+    if (this.dockPrevBtn) this.dockPrevBtn.addEventListener('click', () => this.handleBackward());
     if (this.dockNextBtn) this.dockNextBtn.addEventListener('click', () => this.handleForward());
 
     // Slider Scrubber
@@ -170,9 +203,9 @@ export class BookUI {
         if (index === this.engine.currentLocation) {
           this.handleForward();
         }
-        // Click left page -> flip backward
+        // Click left page -> flip backward (from title page, cascades back to cover)
         else if (index === this.engine.currentLocation - 1) {
-          this.engine.flipBackward();
+          this.handleBackward();
         }
       });
     });
@@ -184,7 +217,7 @@ export class BookUI {
         this.handleForward();
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        this.engine.flipBackward();
+        this.handleBackward();
       } else if (e.key === 'Home') {
         e.preventDefault();
         this.engine.goToLocation(0);

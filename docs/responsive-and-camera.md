@@ -70,8 +70,10 @@ In `css/variables.css`:
 ```css
 --book-width: 760px;
 --page-width: 380px;
---cover-overhang: 16px;
---cover-width: calc(var(--page-width) + var(--cover-overhang)); /* 396px */
+--cover-overhang: 24px;
+--cover-width: calc(var(--page-width) + var(--cover-overhang)); /* 404px */
+--flyleaf-overhang: 18px;
+--flyleaf-width: calc(var(--page-width) + var(--flyleaf-overhang)); /* 398px */
 --book-height: 540px;
 ```
 
@@ -80,16 +82,21 @@ In `css/variables.css`:
 ```
        Spine (0px)
         |
-        |--- Inner Paper Sheets (Sheets 1 to 28) ---| 380px
+        |--- Inner Paper Sheets (Sheets 2 to 27) ---| 380px
         |
-        |------ Hardcover Boards (Sheet 0 & 29) ------| 396px (+16px Overhang)
+        |---- First & Last Flyleaves (Sheet 1 & 28) ----| 398px (+18px Overhang)
         |
-        |---------------- Fore-Edge Markers ----------------| 412px (Protrudes 16px past Cover)
+        |------ Hardcover Boards (Sheet 0 & 29) ------| 404px (+24px Overhang)
+        |
+        |---------------- Fore-Edge Markers ----------------| 412px (Protrudes 8px past Cover)
 ```
 
-* **Inner Paper Sheets** (Sheets 1–28): Fixed width of `--page-width: 380px`.
-* **Hardcover Boards** (`#sheet-0` and `#sheet-29`): Width of `--cover-width: 396px`.
-* **Page Markers**: Protrude to $380\text{px} + 32\text{px} = 412\text{px}$, leaving $412 - 396 = 16\text{px}$ of each tab visible beyond the leather cover edge when closed.
+* **Hardcover Boards** (`#sheet-0` and `#sheet-19`): Width of `--cover-width: 404px` (+24px overhang).
+* **Tier 1 Paper Leaves** (`#sheet-1` and `#sheet-18`): Width of `--flyleaf-width: 398px` (+18px overhang, -8px Y).
+* **Tier 2 Paper Leaves** (`#sheet-2` and `#sheet-17`): Width of `--tier2-width: 388px` (+8px overhang, -6px Y).
+* **Tier 3 Paper Leaves** (`#sheet-3` and `#sheet-16`): Width of `--tier3-width: 384px` (+4px overhang, -4px Y).
+* **Inner Core Paper Sheets** (Sheets 4–15): Fixed width of `--page-width: 380px` (-4px Y).
+* **Page Markers**: Protrude to $380\text{px} + 32\text{px} = 412\text{px}$, leaving $412 - 404 = 8\text{px}$ of each tab visible beyond the leather cover edge when closed.
 
 ---
 
@@ -104,11 +111,11 @@ To keep the visible volume visually centered in the user's viewport, the `.book`
 
 ### Dynamic Centering Formulas
 
-$$\text{Shift}_{closed-front} = -\frac{\text{cover-width}}{2} = -\frac{396\text{px}}{2} = -198\text{px}$$
+$$\text{Shift}_{closed-front} = -\frac{\text{cover-width}}{2} = -\frac{404\text{px}}{2} = -202\text{px}$$
 
 $$\text{Shift}_{open} = 0\text{px}$$
 
-$$\text{Shift}_{closed-back} = +\frac{\text{cover-width}}{2} = +\frac{396\text{px}}{2} = +198\text{px}$$
+$$\text{Shift}_{closed-back} = +\frac{\text{cover-width}}{2} = +\frac{404\text{px}}{2} = +202\text{px}$$
 
 ### CSS Rules in `css/book-3d.css`
 ```css

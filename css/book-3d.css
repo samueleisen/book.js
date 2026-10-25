@@ -79,13 +79,13 @@
   opacity: 0.9;
 }
 
-/* Individual Sheets (Flipping Leaves) */
+/* Individual Sheets (Flipping Paper Leaves) */
 .page-sheet {
   position: absolute;
-  top: 0;
+  top: var(--paper-inset-y, 2px);
   left: 50%; /* Anchored at central spine */
   width: var(--page-width);
-  height: var(--book-height);
+  height: var(--paper-height, calc(var(--book-height) - 4px));
   transform-origin: left center;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
@@ -95,10 +95,36 @@
   will-change: transform;
 }
 
-/* Hardcover Boards (Sheet 0 & Sheet 29) Fore-Edge Overhang */
+/* Hardcover Boards (Sheet 0 & Sheet 19) Full Height & Fore-Edge Overhang */
 .page-sheet#sheet-0,
-.page-sheet#sheet-29 {
+.page-sheet#sheet-19 {
+  top: 0;
+  height: var(--book-height);
   width: var(--cover-width);
+}
+
+/* Tier 1 Paper Leaves (Sheet 1 & Sheet 18): -8px in Y axis (4px top/bottom) */
+.page-sheet#sheet-1,
+.page-sheet#sheet-18 {
+  width: var(--flyleaf-width);
+  top: var(--flyleaf-top);
+  height: var(--flyleaf-height);
+}
+
+/* Tier 2 Paper Leaves (Sheet 2 & Sheet 17): -6px in Y axis (3px top/bottom) */
+.page-sheet#sheet-2,
+.page-sheet#sheet-17 {
+  width: var(--tier2-width);
+  top: var(--tier2-top);
+  height: var(--tier2-height);
+}
+
+/* Tier 3 Paper Leaves (Sheet 3 & Sheet 16): -4px in Y axis (2px top/bottom) */
+.page-sheet#sheet-3,
+.page-sheet#sheet-16 {
+  width: var(--tier3-width);
+  top: var(--tier3-top);
+  height: var(--tier3-height);
 }
 
 /* Ensure closed covers strictly dominate all inner sheets & markers in 2D and 3D */
@@ -107,7 +133,7 @@
   transform: translate3d(0, 0, 2px);
 }
 
-.book.state-closed-back #sheet-29 {
+.book.state-closed-back #sheet-19 {
   z-index: 120 !important;
   transform: translate3d(0, 0, 2px) rotateY(-180deg);
 }
