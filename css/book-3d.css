@@ -206,3 +206,110 @@
   border-width: 40px 0 0 40px;
   border-color: transparent transparent transparent var(--accent-gold);
 }
+
+/* ==========================================================================
+   FORE-EDGE 3D PAGE MARKERS (INDEX TABS)
+   Attached directly to page-sheet leaves, flipping with pages in 3D space.
+   ========================================================================== */
+
+.page-marker {
+  position: absolute;
+  top: var(--marker-top, 100px);
+  right: -32px; /* Protrudes 32px outward beyond the sheet's outer fore-edge */
+  width: 32px;
+  height: 44px;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  pointer-events: auto !important;
+  cursor: pointer;
+  z-index: 25;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Internal 3D Tab container (static placement) */
+.marker-tab {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+/* Elevate marker stacking order on hover so it pops forward */
+.page-marker:hover {
+  z-index: 80;
+}
+
+/* Hover highlights applied directly to faces to avoid 3D flattening */
+.page-marker:hover .marker-face {
+  border-color: var(--accent-gold-light);
+  box-shadow: 0 0 12px var(--accent-gold-glow), 0 4px 14px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, #263140 0%, #171f2c 100%);
+}
+
+.page-marker:hover .marker-text {
+  color: #fff;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+}
+
+/* Double-Sided Faces for Upright Typography in 3D Space */
+.marker-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  background: linear-gradient(135deg, #1b222d 0%, #121720 100%);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  color: var(--accent-gold);
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Front Face: Facing viewer when sheet is on the right stack */
+.marker-face.marker-front {
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  transform: translateZ(1px);
+}
+
+/* Back Face: Rotated 180deg to face viewer upright when sheet is flipped to the left */
+.marker-face.marker-back {
+  border-right: none;
+  border-radius: 5px 0 0 5px;
+  transform: rotateY(180deg) translateZ(1px);
+}
+
+.marker-icon {
+  font-size: 10px;
+  opacity: 0.85;
+  color: var(--accent-gold-light);
+}
+
+.marker-text {
+  font-size: 7.5px;
+  letter-spacing: 0.5px;
+  color: #f7e7a9;
+}
+
+/* Active Highlight when current spread matches marked page */
+.page-marker.active .marker-face {
+  background: linear-gradient(135deg, #2a3547 0%, #1a222e 100%);
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 10px var(--accent-gold-glow);
+}
+
+.page-marker.active .marker-text {
+  color: #fff;
+  font-weight: 800;
+}

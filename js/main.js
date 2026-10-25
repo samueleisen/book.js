@@ -17,7 +17,7 @@ export class BookApp {
     this.audio = new BookAudio();
 
     // 2. Responsive scaling
-    this.responsive = new BookResponsive();
+    this.responsive = new BookResponsive({ zoom: 1.15 });
 
     // 3. UI Controller reference (initialized right after engine)
     this.ui = null;

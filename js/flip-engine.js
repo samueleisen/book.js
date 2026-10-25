@@ -14,9 +14,17 @@ export class FlipEngine {
     this.onChange = onChange;
 
     this.currentLocation = 0; // 0 = Cover, maxLocation = Back Cover
-    this.isFlipping = false;
+
+    // Multi-page rapid flip tracking
+    this.flippingSheets = new Set();
+    this.sheetTimeouts = new Map();
+    this.inFlightCounter = 0;
 
     this.init();
+  }
+
+  get isFlipping() {
+    return this.flippingSheets.size > 0;
   }
 
   init() {
@@ -26,77 +34,105 @@ export class FlipEngine {
   }
 
   flipForward() {
-    if (this.currentLocation >= this.maxLocation || this.isFlipping) return false;
+    if (this.currentLocation >= this.maxLocation) return false;
 
-    this.isFlipping = true;
     const sheetIndex = this.currentLocation;
     const sheet = this.sheets[sheetIndex];
+    if (!sheet) return false;
 
     if (this.audio) {
       this.audio.playFlipSound('forward');
     }
 
-    // 1. Elevate flipping sheet above all others during turn
-    sheet.style.zIndex = '50';
+    // 1. Elevate flipping sheet above resting stacks in chronological turn order
+    this.flippingSheets.add(sheet);
+    sheet.style.zIndex = `${100 + (++this.inFlightCounter)}`;
 
-    // 2. Animate shading on faces
+    // 2. Clear any pending settle timer on this sheet (e.g. if reversing mid-turn)
+    if (this.sheetTimeouts.has(sheet)) {
+      clearTimeout(this.sheetTimeouts.get(sheet));
+    }
+
+    // 3. Animate shading on faces
     this.animateFaceShadow(sheet, 'forward');
 
-    // 3. Apply 3D rotation transform
+    // 4. Apply 3D rotation transform
     sheet.classList.add('flipped');
     this.currentLocation++;
 
-    // 4. Update centering & pointer events immediately
+    // 5. Update centering & pointer events immediately
     this.updateBookCentering();
     this.updatePointerEvents();
     if (this.onChange) this.onChange(this.currentLocation);
 
-    // 5. Finalize z-index rest order upon transition completion
-    setTimeout(() => {
+    // 6. Schedule rest order when this sheet completes its transition
+    const timerId = setTimeout(() => {
+      this.flippingSheets.delete(sheet);
+      this.sheetTimeouts.delete(sheet);
+
+      if (this.flippingSheets.size === 0) {
+        this.inFlightCounter = 0;
+      }
+
       this.updateZIndices();
-      this.isFlipping = false;
+      this.updatePointerEvents();
     }, this.flipDuration);
 
+    this.sheetTimeouts.set(sheet, timerId);
     return true;
   }
 
   flipBackward() {
-    if (this.currentLocation <= 0 || this.isFlipping) return false;
+    if (this.currentLocation <= 0) return false;
 
-    this.isFlipping = true;
     const sheetIndex = this.currentLocation - 1;
     const sheet = this.sheets[sheetIndex];
+    if (!sheet) return false;
 
     if (this.audio) {
       this.audio.playFlipSound('backward');
     }
 
-    // 1. Elevate flipping sheet above all others during turn
-    sheet.style.zIndex = '50';
+    // 1. Elevate flipping sheet above resting stacks in chronological turn order
+    this.flippingSheets.add(sheet);
+    sheet.style.zIndex = `${100 + (++this.inFlightCounter)}`;
 
-    // 2. Animate shading on faces
+    // 2. Clear any pending settle timer on this sheet (e.g. if reversing mid-turn)
+    if (this.sheetTimeouts.has(sheet)) {
+      clearTimeout(this.sheetTimeouts.get(sheet));
+    }
+
+    // 3. Animate shading on faces
     this.animateFaceShadow(sheet, 'backward');
 
-    // 3. Remove 3D rotation transform
+    // 4. Remove 3D rotation transform
     sheet.classList.remove('flipped');
     this.currentLocation--;
 
-    // 4. Update centering & pointer events immediately
+    // 5. Update centering & pointer events immediately
     this.updateBookCentering();
     this.updatePointerEvents();
     if (this.onChange) this.onChange(this.currentLocation);
 
-    // 5. Finalize z-index rest order upon transition completion
-    setTimeout(() => {
+    // 6. Schedule rest order when this sheet completes its transition
+    const timerId = setTimeout(() => {
+      this.flippingSheets.delete(sheet);
+      this.sheetTimeouts.delete(sheet);
+
+      if (this.flippingSheets.size === 0) {
+        this.inFlightCounter = 0;
+      }
+
       this.updateZIndices();
-      this.isFlipping = false;
+      this.updatePointerEvents();
     }, this.flipDuration);
 
+    this.sheetTimeouts.set(sheet, timerId);
     return true;
   }
 
   goToLocation(targetLocation) {
-    if (targetLocation === this.currentLocation || this.isFlipping) return;
+    if (targetLocation === this.currentLocation) return;
     targetLocation = Math.max(0, Math.min(targetLocation, this.maxLocation));
 
     const step = targetLocation > this.currentLocation ? 1 : -1;
@@ -108,7 +144,7 @@ export class FlipEngine {
     } else {
       // Multi-page flip cascade
       let currentStep = 0;
-      const intervalMs = Math.max(80, Math.floor(400 / distance));
+      const intervalMs = Math.max(70, Math.floor(350 / distance));
 
       const cascadeInterval = setInterval(() => {
         if (this.currentLocation === targetLocation || currentStep >= distance) {
@@ -116,22 +152,11 @@ export class FlipEngine {
           return;
         }
 
-        const sIdx = step === 1 ? this.currentLocation : this.currentLocation - 1;
-        const sheet = this.sheets[sIdx];
-
         if (step === 1) {
-          sheet.classList.add('flipped');
-          this.currentLocation++;
+          this.flipForward();
         } else {
-          sheet.classList.remove('flipped');
-          this.currentLocation--;
+          this.flipBackward();
         }
-
-        this.updateZIndices();
-        this.updateBookCentering();
-        this.updatePointerEvents();
-        if (this.onChange) this.onChange(this.currentLocation);
-        if (this.audio) this.audio.playFlipSound(step === 1 ? 'forward' : 'backward');
 
         currentStep++;
       }, intervalMs);
@@ -175,6 +200,11 @@ export class FlipEngine {
 
   updateZIndices() {
     this.sheets.forEach((sheet, index) => {
+      // Do not overwrite z-index of sheets that are currently turning in mid-air
+      if (this.flippingSheets && this.flippingSheets.has(sheet)) {
+        return;
+      }
+
       if (index < this.currentLocation) {
         sheet.style.zIndex = index + 1;
       } else {
@@ -197,6 +227,12 @@ export class FlipEngine {
 
   updatePointerEvents() {
     this.sheets.forEach((sheet, idx) => {
+      // While a sheet is in-flight, disable pointer events so clicks cleanly target resting pages underneath
+      if (this.flippingSheets && this.flippingSheets.has(sheet)) {
+        sheet.style.pointerEvents = 'none';
+        return;
+      }
+
       const isVisibleLeft = idx === this.currentLocation - 1;
       const isVisibleRight = idx === this.currentLocation;
 

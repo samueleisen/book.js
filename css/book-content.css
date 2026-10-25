@@ -325,6 +325,11 @@
   justify-content: space-between;
 }
 
+/* Blank Page Layout */
+.blank-page-layout {
+  min-height: 100%;
+}
+
 /* Title Page Layout */
 .title-page-layout {
   text-align: center;

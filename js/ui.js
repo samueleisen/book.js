@@ -25,21 +25,23 @@ export class BookUI {
 
     this.autoPlayTimer = null;
 
-    // Spread metadata
-    this.spreadNames = [
-      'Cover',
-      'Title • Ex Libris',
-      'Prologue • Study',
-      'Chapter I: Memory',
-      'Chapter II: Space',
-      'Epilogue • Finis',
-      'Back Cover'
-    ];
+    // Spread metadata mapping
+    this.spreadNames = {
+      0: 'Cover',
+      13: 'Title • Ex Libris',
+      14: 'Prologue • Study',
+      15: 'Chapter I: Memory',
+      16: 'Chapter II: Space',
+      17: 'Epilogue • Finis'
+    };
 
     this.init();
   }
 
   init() {
+    if (this.pageSlider) {
+      this.pageSlider.max = this.engine.maxLocation;
+    }
     this.bindEvents();
     this.render(this.engine.currentLocation);
   }
@@ -56,27 +58,50 @@ export class BookUI {
 
     // Labels & slider
     if (this.locationBadge) {
-      this.locationBadge.textContent = this.spreadNames[location] || `Spread ${location}`;
+      if (this.spreadNames[location]) {
+        this.locationBadge.textContent = this.spreadNames[location];
+      } else if (location === 0) {
+        this.locationBadge.textContent = 'Cover';
+      } else if (location === this.engine.maxLocation) {
+        this.locationBadge.textContent = 'Back Cover';
+      } else {
+        this.locationBadge.textContent = `Blank Page • Sheet ${location}`;
+      }
     }
     if (this.pagesTotalLabel) {
       this.pagesTotalLabel.textContent = `Sheet ${location} of ${this.engine.maxLocation}`;
     }
     if (this.pageSlider) {
       this.pageSlider.value = location;
+      this.pageSlider.max = this.engine.maxLocation;
     }
 
     // TOC Active State
     if (this.tocList) {
       const items = this.tocList.querySelectorAll('li');
+      let matchedItem = null;
       items.forEach(item => {
         const targetPage = parseInt(item.getAttribute('data-target-page'), 10);
         if (targetPage === location) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
+          matchedItem = item;
         }
+        item.classList.remove('active');
       });
+      if (matchedItem) {
+        matchedItem.classList.add('active');
+      }
     }
+
+    // Marker Active State
+    const markers = document.querySelectorAll('.page-marker');
+    markers.forEach(marker => {
+      const targetPage = parseInt(marker.getAttribute('data-target-page'), 10);
+      if (targetPage === location || (location > 0 && targetPage === location - 1)) {
+        marker.classList.add('active');
+      } else {
+        marker.classList.remove('active');
+      }
+    });
   }
 
   bindEvents() {
@@ -94,10 +119,33 @@ export class BookUI {
       });
     }
 
+    // Interactive 3D Fore-Edge Page Markers
+    const bookEl = this.engine.book || document.getElementById('book');
+    if (bookEl) {
+      bookEl.addEventListener('click', (e) => {
+        const marker = e.target.closest('.page-marker');
+        if (!marker) return;
+
+        const parentSheet = marker.closest('.page-sheet');
+        if (this.engine.flippingSheets && this.engine.flippingSheets.has(parentSheet)) {
+          return; // Ignore clicks on markers while their sheet is in mid-flight
+        }
+
+        e.stopPropagation();
+        e.preventDefault();
+
+        const targetPage = parseInt(marker.getAttribute('data-target-page'), 10);
+        if (!isNaN(targetPage)) {
+          if (this.audio) this.audio.playFlipSound(targetPage > this.engine.currentLocation ? 'forward' : 'backward');
+          this.engine.goToLocation(targetPage);
+        }
+      });
+    }
+
     // Direct Clicks on Page Sheets
     this.engine.sheets.forEach((sheet, index) => {
       sheet.addEventListener('click', (e) => {
-        if (e.target.closest('.toc-drawer')) return;
+        if (e.target.closest('.toc-drawer') || e.target.closest('.page-marker')) return;
 
         // Click right page -> flip forward
         if (index === this.engine.currentLocation) {
