@@ -29,7 +29,7 @@ export class BookUI {
     this.spreadNames = {
       0: 'Cover',
       6: 'Title Page',
-      7: 'Prologue • Study',
+      7: 'Prologue • Panoramic Canvas',
       8: 'Chapter I: Memory',
       9: 'Chapter II: Space',
       10: 'Epilogue • Finis'
@@ -114,9 +114,10 @@ export class BookUI {
   }
 
   getEpilogueLocation() {
-    const epilMarker = Array.from(document.querySelectorAll('.page-marker')).find(m =>
-      m.querySelector('.marker-text')?.textContent.trim() === 'EPIL'
-    );
+    const epilMarker = Array.from(document.querySelectorAll('.page-marker')).find(m => {
+      const text = m.querySelector('.marker-text')?.textContent.trim();
+      return text === 'EPIL' || text === 'EPILOGUE';
+    });
     if (epilMarker) {
       const page = parseInt(epilMarker.getAttribute('data-target-page'), 10);
       if (!isNaN(page)) return page;

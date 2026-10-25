@@ -5,8 +5,8 @@
 
 export class BookResponsive {
   constructor({
-    targetWidth = 840,
-    targetHeight = 600,
+    targetWidth = 920,
+    targetHeight = 620,
     zoom = 1.15,
     minScale = 0.55,
     maxScale = 2.50

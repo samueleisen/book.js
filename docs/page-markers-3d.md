@@ -11,19 +11,20 @@ In fine bookbinding, fore-edge index tabs project beyond the outer vertical cut 
 ```
        Spine (0px)                     Fore-Edge (380px)
         |                                       |
-        +---------------------------------------+----[ TITL ] (right: -32px)
+        +---------------------------------------+--------[ TITLE ] (right: -76px)
         |                                       |
-        |               PAGE SHEET              |----[ PROL ]
+        |               PAGE SHEET              |--------[ PROLOGUE ]
         |                                       |
-        |                                       |----[ CH.I ]
+        |                                       |--------[ CHAPTER I ]
         |                                       |
         +---------------------------------------+
 ```
 
 ### Protrusion Geometry
 * **Leaf Width**: `--page-width: 380px`
-* **Tab Dimensions**: `width: 32px`, `height: 44px`
-* **Static Position**: `right: -32px` (extends 32px past the sheet's outer edge into the open stage)
+* **Tab Dimensions**: `width: 85px`, `height: 44px` (configured via `--marker-width: 85px` and `--marker-height: 44px`)
+* **Static Position**: `right: -85px` (`right: calc(-1 * var(--marker-width))`), extending 85px outward past the sheet's outer edge into the open stage so readable paper text is never covered.
+* **Content Offset**: `--marker-content-offset: 5px;` shifts the label text and icon outward towards the fore-edge on both sides (`translateX(+5px)` on `.marker-front`, `translateX(-5px)` on `.marker-back`).
 * **Vertical Positioning**: Configurable per marker via `--marker-top` CSS variable (e.g., `130px`, `190px`, `250px`, `310px`, `370px`).
 
 ---
@@ -36,17 +37,17 @@ When a sheet flips $-180^\circ$ from the right stack over to the left stack, all
 Each `.page-marker` houses two discrete 3D backface-hidden surfaces:
 
 ```html
-<div class="page-marker" data-target-page="13" style="--marker-top: 130px;">
+<div class="page-marker" data-target-page="6" style="--marker-top: 130px;">
   <div class="marker-tab">
     <!-- Front Face (visible on right stack) -->
     <div class="marker-face marker-front">
       <span class="marker-icon">❧</span>
-      <span class="marker-text">TITL</span>
+      <span class="marker-text">TITLE</span>
     </div>
     <!-- Back Face (visible on left stack) -->
     <div class="marker-face marker-back">
       <span class="marker-icon">❧</span>
-      <span class="marker-text">TITL</span>
+      <span class="marker-text">TITLE</span>
     </div>
   </div>
 </div>
@@ -124,8 +125,8 @@ Page markers must interact cleanly with the hardcover casing:
 3. **Cover Dominance**:
    * When closed, `#sheet-0` and `#sheet-16` have `z-index: 120 !important;` and `transform: translate3d(0, 0, 2px)`.
    * With `--cover-overhang: 24px`, the cover board is 404px wide, while paper sheets are 380px.
-   * Tabs extend to $380 + 32 = 412\text{px}$.
-   * Therefore, $412 - 404 = 8\text{px}$ of each tab protrudes cleanly beyond the leather cover board when closed.
+   * Tabs extend outward to $380 + 76 = 456\text{px}$.
+   * Therefore, $456 - 404 = 52\text{px}$ of each tab protrudes cleanly beyond the leather cover board when closed, presenting full unshortened titles.
 
 ---
 

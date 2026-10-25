@@ -68,30 +68,30 @@ The book is structured as a 3D book container containing **17 `.page-sheet` elem
     │   ├── .face.front.face-paper (.blank-page-layout)
     │   └── .face.back.face-paper (.blank-page-layout)
     │
-    ├── #sheet-6 [Title Page]
+    ├── #sheet-6 [Title Page / Panoramic Left Canvas]
     │   ├── .face.front.face-paper (#page-title: Title Page)
-    │   ├── .face.back.face-paper (#page-prologue-1: Prologue Left)
-    │   └── .page-marker[data-target-page="6"] (TITL tab)
+    │   ├── .face.back.face-paper.panoramic-canvas-face (#page-prologue-1: Left Half of Panoramic Canvas)
+    │   └── .page-marker[data-target-page="6"] (TITLE tab)
     │
-    ├── #sheet-7 [Prologue]
-    │   ├── .face.front.face-paper (#page-prologue-2: Architectural study diagram)
+    ├── #sheet-7 [Prologue / Panoramic Right Canvas]
+    │   ├── .face.front.face-paper.panoramic-canvas-face (#page-prologue-2: Right Half of Panoramic Canvas)
     │   ├── .face.back.face-paper (#page-chap1-left: Chapter I Left)
-    │   └── .page-marker[data-target-page="7"] (PROL tab)
+    │   └── .page-marker[data-target-page="7"] (PROLOGUE tab)
     │
     ├── #sheet-8 [Chapter I: Memory]
     │   ├── .face.front.face-paper (#page-chap1-right: Chapter I Right)
     │   ├── .face.back.face-paper (#page-chap2-left: Chapter II Left)
-    │   └── .page-marker[data-target-page="8"] (CH.I tab)
+    │   └── .page-marker[data-target-page="8"] (CHAPTER I tab)
     │
     ├── #sheet-9 [Chapter II: Space]
     │   ├── .face.front.face-paper (#page-chap2-right: Chapter II Right)
     │   ├── .face.back.face-paper (#page-colophon: Colophon & Notes)
-    │   └── .page-marker[data-target-page="9"] (CH.II tab)
+    │   └── .page-marker[data-target-page="9"] (CHAPTER II tab)
     │
     ├── #sheet-10 [Epilogue / Flyleaf]
     │   ├── .face.front.face-paper (.blank-page-layout)
     │   ├── .face.back.face-paper (.blank-page-layout)
-    │   └── .page-marker[data-target-page="10"] (EPIL tab)
+    │   └── .page-marker[data-target-page="10"] (EPILOGUE tab)
     │
     ├── #sheet-11 to #sheet-15 [Closing Blank Flyleaves]
     │   ├── .face.front.face-paper (.blank-page-layout)

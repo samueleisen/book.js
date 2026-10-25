@@ -77,6 +77,18 @@
   z-index: 5;
   pointer-events: none;
   opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+/* Hide spine crease when viewing a seamless panoramic canvas spread */
+.book.state-panoramic-spread .book-spine-crease {
+  opacity: 0;
+}
+
+/* Suppress spine shading gradients on panoramic canvas page faces */
+.face.panoramic-canvas-face .spine-shading {
+  display: none !important;
+  opacity: 0 !important;
 }
 
 /* Individual Sheets (Flipping Paper Leaves) */
@@ -258,9 +270,9 @@
 .page-marker {
   position: absolute;
   top: var(--marker-top, 100px);
-  right: -32px; /* Protrudes 32px outward beyond the sheet's outer fore-edge */
-  width: 32px;
-  height: 44px;
+  right: calc(-1 * var(--marker-width, 85px)); /* Protrudes outward beyond the sheet's outer fore-edge */
+  width: var(--marker-width, 85px);
+  height: var(--marker-height, 44px);
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   pointer-events: auto !important;
@@ -306,43 +318,57 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  padding: 0 6px;
+  box-sizing: border-box;
   background: linear-gradient(135deg, #1b222d 0%, #121720 100%);
   border: 1px solid rgba(212, 175, 55, 0.45);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   color: var(--accent-gold);
-  font-family: var(--font-display);
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  line-height: 1;
   text-align: center;
 }
 
 /* Front Face: Facing viewer when sheet is on the right stack */
 .marker-face.marker-front {
   border-left: none;
-  border-radius: 0 5px 5px 0;
+  border-radius: 0 6px 6px 0;
   transform: translateZ(1px);
 }
 
 /* Back Face: Rotated 180deg to face viewer upright when sheet is flipped to the left */
 .marker-face.marker-back {
   border-right: none;
-  border-radius: 5px 0 0 5px;
+  border-radius: 6px 0 0 6px;
   transform: rotateY(180deg) translateZ(1px);
 }
 
 .marker-icon {
-  font-size: 10px;
-  opacity: 0.85;
+  font-size: 11px;
+  opacity: 0.9;
   color: var(--accent-gold-light);
+  line-height: 1;
 }
 
 .marker-text {
+  font-family: var(--font-display);
   font-size: 7.5px;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  line-height: 1.1;
   color: #f7e7a9;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+/* Outward typography & icon offset (shifted towards outer fore-edge on both sides) */
+.marker-face.marker-front .marker-icon,
+.marker-face.marker-front .marker-text {
+  transform: translateX(var(--marker-content-offset, 5px));
+}
+
+.marker-face.marker-back .marker-icon,
+.marker-face.marker-back .marker-text {
+  transform: translateX(calc(-1 * var(--marker-content-offset, 5px)));
 }
 
 /* Active Highlight when current spread matches marked page */

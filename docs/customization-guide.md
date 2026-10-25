@@ -75,7 +75,7 @@ Place the `.page-marker` element directly inside the `.page-sheet` container (no
     <!-- Back Face (Left Stack - Flipped) -->
     <div class="marker-face marker-back">
       <span class="marker-icon">✦</span>
-      <span class="marker-text">EPIL</span>
+      <span class="marker-text">EPILOGUE</span>
     </div>
   </div>
 </div>
@@ -84,12 +84,12 @@ Place the `.page-marker` element directly inside the `.page-sheet` container (no
 ### Guidelines for Markers
 * **`data-target-page`**: Set to the sheet index you want the book to flip to when clicked.
 * **`--marker-top`**: Space tabs at 60px increments to avoid vertical overlaps:
-  * Tab 1: `--marker-top: 130px;` (TITL)
-  * Tab 2: `--marker-top: 190px;` (PROL)
-  * Tab 3: `--marker-top: 250px;` (CH.I)
-  * Tab 4: `--marker-top: 310px;` (CH.II)
-  * Tab 5: `--marker-top: 370px;` (EPIL)
-* **Text Length**: Keep tab labels to 4 uppercase characters (`TITL`, `PROL`, `CH.I`, `CH.II`, `EPIL`) for optimal typography fit.
+  * Tab 1: `--marker-top: 130px;` (TITLE)
+  * Tab 2: `--marker-top: 190px;` (PROLOGUE)
+  * Tab 3: `--marker-top: 250px;` (CHAPTER I)
+  * Tab 4: `--marker-top: 310px;` (CHAPTER II)
+  * Tab 5: `--marker-top: 370px;` (EPILOGUE)
+* **Text Length & Geometry**: Tabs are 76px wide (`--marker-width: 76px`) and extend outward into the stage (`right: -76px`), accommodating full unshortened titles (`TITLE`, `PROLOGUE`, `CHAPTER I`, `CHAPTER II`, `EPILOGUE`) without wrapping or truncation.
 
 ---
 

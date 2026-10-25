@@ -92,7 +92,7 @@ In `css/variables.css`:
         |
         |------ Hardcover Boards (Sheet 0 & 16) ------| 404px (+24px Overhang)
         |
-        |---------------- Fore-Edge Markers ----------------| 412px (Protrudes 8px past Cover)
+        |---------------- Fore-Edge Markers ----------------| 456px (Protrudes 52px past Cover)
 ```
 
 * **Hardcover Boards** (`#sheet-0` and `#sheet-16`): Width of `--cover-width: 404px` (+24px overhang).
@@ -100,7 +100,7 @@ In `css/variables.css`:
 * **Tier 2 Paper Leaves** (`#sheet-2` and `#sheet-14`): Width of `--tier2-width: 388px` (+8px overhang, -6px Y).
 * **Tier 3 Paper Leaves** (`#sheet-3` and `#sheet-13`): Width of `--tier3-width: 384px` (+4px overhang, -4px Y).
 * **Inner Core Paper Sheets** (Sheets 4–12): Fixed width of `--page-width: 380px` (-4px Y).
-* **Page Markers**: Protrude to $380\text{px} + 32\text{px} = 412\text{px}$, leaving $412 - 404 = 8\text{px}$ of each tab visible beyond the leather cover edge when closed.
+* **Page Markers**: Protrude to $380\text{px} + 76\text{px} = 456\text{px}$, leaving $456 - 404 = 52\text{px}$ of each tab visible beyond the leather cover edge when closed, accommodating full unshortened titles.
 
 ---
 

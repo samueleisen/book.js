@@ -247,6 +247,15 @@ export class FlipEngine {
     } else {
       this.book.classList.add('state-open');
     }
+
+    // Toggle panoramic spread state to seamlessly remove the central spine crease
+    const leftSheet = this.sheets[this.currentLocation - 1];
+    const rightSheet = this.sheets[this.currentLocation];
+    const isPanoramicSpread =
+      (leftSheet && leftSheet.querySelector('.face.back.panoramic-canvas-face')) ||
+      (rightSheet && rightSheet.querySelector('.face.front.panoramic-canvas-face'));
+
+    this.book.classList.toggle('state-panoramic-spread', !!isPanoramicSpread);
   }
 
   updatePointerEvents() {

@@ -28,13 +28,32 @@ temporary context to remember for human
 ### Current 17-Sheet Layout Reference (Sheets 0 to 16):
 - **Sheet 0**: Front Hardcover Board (Outside Front Cover / Inside Front Cover)
 - **Sheets 1 to 5**: Opening flyleaves filled with chaotic fantasy mess & arcane symbols (Tier 1: Sheet 1, Tier 2: Sheet 2, Tier 3: Sheet 3, Untweaked: Sheets 4, 5)
-- **Sheet 6**: Title Page (`#page-title`, `TITL` marker) / Prologue Left
-- **Sheet 7**: Prologue Right / Chapter I Left (`PROL` marker, with original Fig. 1 Penumbra diagram)
-- **Sheet 8**: Chapter I Right / Chapter II Left (`CH.I` marker)
-- **Sheet 9**: Chapter II Right / Epilogue & Colophon Left (`#page-epilogue`, `CH.II` marker)
-- **Sheet 10**: Epilogue Facing Sheet filled with chaotic fantasy mess & arcane symbols (`EPIL` marker)
+- **Sheet 6**: Title Page (`#page-title`, `TITLE` marker) / Prologue Left (`#page-prologue-1`, Left Half of Panoramic Full-Spread Canvas)
+- **Sheet 7**: Prologue Right (`#page-prologue-2`, Right Half of Panoramic Full-Spread Canvas) / Chapter I Left (`PROLOGUE` marker, with Fig. 1 Penumbra diagram)
+- **Sheet 8**: Chapter I Right / Chapter II Left (`CHAPTER I` marker)
+- **Sheet 9**: Chapter II Right / Epilogue & Colophon Left (`#page-epilogue`, `CHAPTER II` marker)
+- **Sheet 10**: Epilogue Facing Sheet filled with chaotic fantasy mess & arcane symbols (`EPILOGUE` marker)
 - **Sheets 11 to 15**: Closing flyleaves filled with chaotic fantasy mess & arcane symbols (Untweaked: Sheets 11, 12, Tier 3: Sheet 13, Tier 2: Sheet 14, Tier 1: Sheet 15)
 - **Sheet 16**: Back Hardcover Board (Inside Back Cover / Outside Back Cover)
+
+### Fore-Edge 3D Page Markers (Expanded Outward to 76px):
+- **Outward Protrusion (`right: -85px; width: 85px;`)**:
+  - The tabs expand outward into the open air/margin beyond the sheet's fore-edge (`right: calc(-1 * var(--marker-width, 85px))`), ensuring zero encroachment onto readable page text.
+  - Content offset (`--marker-content-offset: 5px;`) translates typography and icons 5px outward towards the fore-edge on both sides (`+5px` on right stack front faces, `-5px` on left stack back faces).
+  - Extends 61px beyond the 404px hardcover casing when the book is closed.
+- **Full Unshortened Typography**:
+  - No abbreviations necessary: displays `TITLE`, `PROLOGUE`, `CHAPTER I`, `CHAPTER II`, and `EPILOGUE` with icons.
+  - Dual-faced 3D typography flips upright on both the right and left page stacks.
+  - `targetWidth` adjusted to 920px in `BookResponsive` to prevent viewport edge clipping on all screens.
+
+### Panoramic Full-Spread Canvas (Pages 2 & 3):
+- **Continuous 760px × 532px Canvas**: Pages 2 & 3 (Sheet 6 Back and Sheet 7 Front) are united into a single, seamless rectangular canvas with "no middle part".
+- **Zero Crease & Shadow in Middle**:
+  - The central spine crease groove (`.book-spine-crease`) is automatically hidden via `.book.state-panoramic-spread`.
+  - The gutter gradient shadows (`.spine-shading`) are eliminated via `.face.panoramic-canvas-face`.
+- **Unified Outer Frame & Headers**:
+  - Gold outer framing borders (`.panoramic-canvas-layout.panoramic-left` and `.panoramic-right`) meet seamlessly at the center spine line ($x = 0$) with corner bracket accents.
+  - Aligned continuous running heads and footers allow content, diagrams, and text to flow across the spread as an unbroken drafting surface.
 
 ### Procedural Fantasy Mess & Arcane Symbols (`js/fantasy-mess.js`):
 - Generates chaotic, layered arcane scribbles, occult summoning arrays, alchemy symbols (🜂, 🜄, 🜁, 🜃, 🜍, 🜕, 🝤, 🝯, 🜔, ☉, ☽, ☿, ♃, ♄), elder runes (᚛, ᚜, ᚠ, ᚢ, ᚦ, ᚨ, ᚱ, ᚲ, ᛟ), star polygons, concentric rings, compass scratch marks, ink splatters, and struck-out esoteric formulas.

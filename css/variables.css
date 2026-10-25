@@ -50,6 +50,9 @@
   --book-height: 540px;
   --paper-inset-y: 4px;
   --paper-height: calc(var(--book-height) - (var(--paper-inset-y) * 2));
+  --marker-width: 85px;
+  --marker-height: 44px;
+  --marker-content-offset: 10px;
 
   /* Tiered Y-axis Reductions */
   --flyleaf-reduction-y: 12px;
