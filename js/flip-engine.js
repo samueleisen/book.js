@@ -132,6 +132,11 @@ export class FlipEngine {
   }
 
   goToLocation(targetLocation) {
+    if (this.cascadeInterval) {
+      clearInterval(this.cascadeInterval);
+      this.cascadeInterval = null;
+    }
+
     if (targetLocation === this.currentLocation) return;
     targetLocation = Math.max(0, Math.min(targetLocation, this.maxLocation));
 
@@ -146,9 +151,10 @@ export class FlipEngine {
       let currentStep = 0;
       const intervalMs = Math.max(70, Math.floor(350 / distance));
 
-      const cascadeInterval = setInterval(() => {
+      this.cascadeInterval = setInterval(() => {
         if (this.currentLocation === targetLocation || currentStep >= distance) {
-          clearInterval(cascadeInterval);
+          clearInterval(this.cascadeInterval);
+          this.cascadeInterval = null;
           return;
         }
 

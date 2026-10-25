@@ -28,7 +28,7 @@ export class BookUI {
     // Spread metadata mapping
     this.spreadNames = {
       0: 'Cover',
-      13: 'Title • Ex Libris',
+      13: 'Title Page',
       14: 'Prologue • Study',
       15: 'Chapter I: Memory',
       16: 'Chapter II: Space',
@@ -104,12 +104,31 @@ export class BookUI {
     });
   }
 
+  getTitlePageLocation() {
+    const titleSheet = document.getElementById('page-title')?.closest('.page-sheet');
+    if (titleSheet) {
+      const sheetIdx = parseInt(titleSheet.getAttribute('data-sheet'), 10);
+      if (!isNaN(sheetIdx)) return sheetIdx;
+    }
+    return 13;
+  }
+
+  handleForward() {
+    // From closed front cover (sheet 0), right flip immediately cascades to the Title Page
+    if (this.engine.currentLocation === 0) {
+      const target = this.getTitlePageLocation();
+      this.engine.goToLocation(target);
+    } else {
+      this.engine.flipForward();
+    }
+  }
+
   bindEvents() {
     // Navigation Button Clicks
     if (this.prevStageBtn) this.prevStageBtn.addEventListener('click', () => this.engine.flipBackward());
-    if (this.nextStageBtn) this.nextStageBtn.addEventListener('click', () => this.engine.flipForward());
+    if (this.nextStageBtn) this.nextStageBtn.addEventListener('click', () => this.handleForward());
     if (this.dockPrevBtn) this.dockPrevBtn.addEventListener('click', () => this.engine.flipBackward());
-    if (this.dockNextBtn) this.dockNextBtn.addEventListener('click', () => this.engine.flipForward());
+    if (this.dockNextBtn) this.dockNextBtn.addEventListener('click', () => this.handleForward());
 
     // Slider Scrubber
     if (this.pageSlider) {
@@ -147,9 +166,9 @@ export class BookUI {
       sheet.addEventListener('click', (e) => {
         if (e.target.closest('.toc-drawer') || e.target.closest('.page-marker')) return;
 
-        // Click right page -> flip forward
+        // Click right page -> flip forward (from cover, cascades to title page)
         if (index === this.engine.currentLocation) {
-          this.engine.flipForward();
+          this.handleForward();
         }
         // Click left page -> flip backward
         else if (index === this.engine.currentLocation - 1) {
@@ -162,7 +181,7 @@ export class BookUI {
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
-        this.engine.flipForward();
+        this.handleForward();
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
         this.engine.flipBackward();

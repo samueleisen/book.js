@@ -61,10 +61,13 @@ book.js/
 Detailed workspace documentation and technical guides are available in the **[`docs/`](docs/README.md)** directory:
 
 - 📖 **[Architecture & Workspace Design](docs/architecture.md)**: System topology, modular boundaries, lifecycle & data flow.
-- 📐 **[3D Flip Mechanics & Stacking Engine](docs/flip-mechanics-3d.md)**: 3D geometry, pivot anchoring, and mathematical z-index scheduling.
+- 📐 **[3D Flip Mechanics & Physics Engine](docs/flip-mechanics-3d.md)**: 3D geometry, pivot anchoring, and mathematical z-index scheduling.
+- 🔖 **[Fore-Edge 3D Page Markers](docs/page-markers-3d.md)**: Geometry of protruding tabs, upright double-sided 3D typography, and hover elevation.
 - 💡 **[Lighting Simulation & Procedural Audio](docs/lighting-and-audio.md)**: Dynamic shading models and Web Audio API synthesis.
-- 🛠 **[Customization & Extension Guide](docs/customization-guide.md)**: Adding pages, modifying dimensions, and theme customization.
+- 🔍 **[Responsive Camera & Viewport Scaling](docs/responsive-and-camera.md)**: Auto-scaling algorithm, zoom multiplier (`1.15`), and cover overhang geometry.
+- 🛠 **[Customization & Extension Cookbook](docs/customization-guide.md)**: Adding pages, modifying dimensions, and theme customization.
 - 📚 **[API Reference Specification](docs/api-reference.md)**: Complete class methods, properties, and parameters.
+- ⚠️ **[Troubleshooting & CSS 3D Pitfalls](docs/troubleshooting-and-pitfalls.md)**: Edge-case resolutions (CSS `filter` context flattening, inverted Z-axes).
 
 ## Running Locally
 

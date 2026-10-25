@@ -1,182 +1,163 @@
-# Customization & Extension Guide
+# Customization & Extension Cookbook
 
-This guide provides practical recipes and step-by-step instructions for customizing the **Lumina & Form** workspace to fit your own publications, catalogues, or presentations.
+This guide provides practical, step-by-step instructions for customizing the **Lumina & Form** book, including adding or removing pages, attaching fore-edge markers, modifying dimensions, adjusting typography, and styling themes.
 
 ---
 
-## Recipe 1: Adding a New Page Sheet
+## 1. Adding a New Page Sheet
 
-Adding pages to the book is straightforward. Each physical leaf represents one `.page-sheet` element containing a `.face.front` and a `.face.back`.
+Each page sheet in `index.html` represents a physical leaf with two faces (Front and Back).
 
-### Step 1: Add HTML in `index.html`
-Place the new `.page-sheet` inside `<div class="book" id="book">`, maintaining sequential `data-sheet` numbering:
+### Step 1: Add HTML Markup
+Insert the new `.page-sheet` element within `.book`. Ensure sequential `data-sheet` indexing:
 
 ```html
-<!-- SHEET 5: NEW CHAPTER -->
-<div class="page-sheet" data-sheet="5" id="sheet-5">
-  <!-- Front Face (Right page when opening this spread) -->
-  <div class="face front face-paper">
+<div class="page-sheet" data-sheet="17" id="sheet-17">
+  <!-- Front Face (Right page when spread is reached) -->
+  <div class="face front face-paper" id="page-new-chapter">
     <div class="paper-content editorial-page-layout">
       <div class="running-head">
         <span class="running-head-left">CHAPTER III</span>
-        <span class="running-head-center">NEW TITLE</span>
+        <span class="running-head-center">LUMINA &amp; FORM</span>
       </div>
       <div class="body-text">
-        <p>Your custom content goes here...</p>
+        <p class="lead-paragraph">
+          <span class="drop-cap">A</span>rchitectural space begins not with materials, but with void.
+        </p>
+        <p>Your chapter body content goes here...</p>
       </div>
       <div class="page-footer">
-        <span class="folio-num">9</span>
+        <span class="folio-num">7</span>
       </div>
     </div>
     <div class="spine-shading right-spine"></div>
-    <div class="corner-fold-hint right-hint"><span class="fold-triangle"></span></div>
+    <div class="corner-fold-hint right-hint" title="Next page">
+      <span class="fold-triangle"></span>
+    </div>
     <div class="face-lighting-overlay"></div>
   </div>
 
-  <!-- Back Face (Left page when turning to next spread) -->
+  <!-- Back Face (Left page when next leaf is turned) -->
   <div class="face back face-paper">
-    <div class="paper-content editorial-page-layout">
-      <div class="running-head">
-        <span class="running-head-center">CONTINUED</span>
-      </div>
-      <div class="body-text">
-        <p>Page content continues here...</p>
-      </div>
-      <div class="page-footer">
-        <span class="folio-num">10</span>
-      </div>
-    </div>
+    <div class="paper-content blank-page-layout"></div>
     <div class="spine-shading left-spine"></div>
-    <div class="corner-fold-hint left-hint"><span class="fold-triangle"></span></div>
+    <div class="corner-fold-hint left-hint" title="Previous page">
+      <span class="fold-triangle"></span>
+    </div>
     <div class="face-lighting-overlay"></div>
   </div>
 </div>
 ```
 
-### Step 2: Update Scrubber Slider Max in `index.html`
-Update the `max` attribute on `#pageSlider` to match the new total number of sheets:
+### Step 2: Update Sequential Sheet Numbers
+If you insert a sheet into the middle of the book, increment the `data-sheet` attributes and `id="sheet-N"` IDs for all subsequent sheets up to the back cover.
+
+> [!NOTE]
+> `FlipEngine` automatically queries all `.page-sheet` elements via `querySelectorAll('.page-sheet')` on startup. You do not need to update any hardcoded sheet count in JavaScript!
+
+---
+
+## 2. Attaching a Fore-Edge Page Marker (Index Tab)
+
+To attach an interactive 3D index tab to any sheet:
+
+### Step 1: Add the `.page-marker` Element
+Place the `.page-marker` element directly inside the `.page-sheet` container (not inside `.face`):
+
 ```html
-<input type="range" id="pageSlider" min="0" max="7" value="0" step="1">
+<div class="page-marker" data-target-page="17" style="--marker-top: 370px;" title="Jump to Epilogue">
+  <div class="marker-tab">
+    <!-- Front Face (Right Stack) -->
+    <div class="marker-face marker-front">
+      <span class="marker-icon">✦</span>
+      <span class="marker-text">EPIL</span>
+    </div>
+    <!-- Back Face (Left Stack - Flipped) -->
+    <div class="marker-face marker-back">
+      <span class="marker-icon">✦</span>
+      <span class="marker-text">EPIL</span>
+    </div>
+  </div>
+</div>
 ```
 
-### Step 3: Add Table of Contents Entry
-Add a corresponding `<li>` to `#tocList`:
-```html
-<li data-target-page="5">
-  <span>Chapter III: New Title</span>
-  <span class="toc-pg">9</span>
-</li>
-```
-
-### Step 4: Update `spreadNames` in `js/ui.js`
-Open `js/ui.js` and add the new spread's title to `this.spreadNames`:
-```javascript
-this.spreadNames = [
-  'Cover',
-  'Title • Ex Libris',
-  'Prologue • Study',
-  'Chapter I: Memory',
-  'Chapter II: Space',
-  'Chapter III: New Title', // <-- New Spread Added Here
-  'Epilogue • Finis',
-  'Back Cover'
-];
-```
+### Guidelines for Markers
+* **`data-target-page`**: Set to the sheet index you want the book to flip to when clicked.
+* **`--marker-top`**: Space tabs at 60px increments to avoid vertical overlaps:
+  * Tab 1: `--marker-top: 130px;` (TITL)
+  * Tab 2: `--marker-top: 190px;` (PROL)
+  * Tab 3: `--marker-top: 250px;` (CH.I)
+  * Tab 4: `--marker-top: 310px;` (CH.II)
+  * Tab 5: `--marker-top: 370px;` (EPIL)
+* **Text Length**: Keep tab labels to 4 uppercase characters (`TITL`, `PROL`, `CH.I`, `CH.II`, `EPIL`) for optimal typography fit.
 
 ---
 
-## Recipe 2: Changing Book Dimensions
+## 3. Customizing Dimensions & Cover Overhang
 
-All geometric calculations derive from CSS custom properties in `css/variables.css`.
+All geometry tokens are centralized in `css/variables.css`:
 
-### Step 1: Adjust Variables in `css/variables.css`
 ```css
 :root {
-  /* For a square folio edition */
-  --book-width: 800px;
-  --page-width: 400px;  /* Always exactly half of --book-width */
-  --book-height: 600px;
+  /* Book Geometry & Dimensions */
+  --book-width: 760px;
+  --page-width: 380px;
+  --cover-overhang: 16px;      /* Hardcover board overhang past paper leaves */
+  --cover-width: calc(var(--page-width) + var(--cover-overhang)); /* 396px */
+  --book-height: 540px;
 }
 ```
 
-### Step 2: Update Centering Offsets in `css/book-3d.css`
-When the book is closed, it shifts by half of `--page-width` ($200\text{px}$):
-```css
-.book.state-closed-front {
-  transform: scale(var(--book-scale)) translateX(-200px); /* -page-width / 2 */
-}
+* **Increase Cover Overhang**: Change `--cover-overhang` (e.g., `8px`, `12px`, `16px`). Centering and desk shadows automatically update via CSS `calc()`.
+* **Make Book Larger/Smaller**: Change `--book-height` and `--book-width`. Ensure `--page-width` is exactly half of `--book-width`.
 
-.book.state-closed-back {
-  transform: scale(var(--book-scale)) translateX(200px);  /* +page-width / 2 */
-}
+---
+
+## 4. Customizing Theme, Leather & Foil
+
+In `css/variables.css`, edit the design tokens:
+
+### Dark Leather & Gold Foil (Default)
+```css
+--cover-leather: #141b25;           /* Midnight deep navy leather */
+--cover-border: #d4af37;            /* Antique gold foil border */
+--cover-foil: #f5df88;              /* Radiant gold foil text */
+--paper-cream: #faf7f2;             /* Archival cream paper background */
+--paper-text: #242220;              /* Carbon print typography */
+--paper-accent: #8b3a2b;            /* Madder red callout / section accents */
+```
+
+### Alternative: Burgundy & Rose Gold Theme
+```css
+--cover-leather: #2b1219;
+--cover-border: #d48375;
+--cover-foil: #f7bfa9;
+--paper-cream: #fbf8f5;
+--paper-text: #2c1e22;
+--paper-accent: #9c2d42;
 ```
 
 ---
 
-## Recipe 3: Customizing the Visual Theme
+## 5. Adjusting Flip Speed & Easing Physics
 
-### Leather Cover & Foil Colors
-In `css/variables.css`:
+To make page turns faster or slower, adjust the animation physics tokens in `css/variables.css`:
+
 ```css
 :root {
-  /* Rich Emerald & Bronze Foil Theme */
-  --cover-leather: #0d261d;
-  --cover-border: #c49a45;
-  --cover-foil: #e8c87b;
-  
-  /* Vintage Parchment Paper */
-  --paper-cream: #f4ede1;
-  --paper-text: #2c251f;
-  --paper-accent: #1e4a38;
+  /* Animation Physics */
+  --flip-duration: 0.92s;  /* Change to 0.70s for faster turns, 1.2s for slow luxury */
+  --flip-easing: cubic-bezier(0.25, 0.85, 0.35, 1.0); /* Deceleration curve */
 }
 ```
 
-### Swapping Typography
-Fonts are configured in `index.html` and referenced in `css/variables.css`:
-```css
-:root {
-  --font-serif: 'EB Garamond', serif;
-  --font-display: 'Playfair Display', serif;
-  --font-sans: 'Inter', sans-serif;
-}
-```
-
----
-
-## Recipe 4: Programmatic Control via JavaScript API
-
-The engine is globally accessible via `window.bookApp`:
-
+And in `js/main.js`:
 ```javascript
-// Flip to next page spread
-window.bookApp.engine.flipForward();
-
-// Flip to previous page spread
-window.bookApp.engine.flipBackward();
-
-// Jump directly to Spread 3
-window.bookApp.engine.goToLocation(3);
-
-// Read current location (0 = Cover, maxLocation = Back Cover)
-console.log(window.bookApp.engine.currentLocation);
-
-// Toggle sound synthesis on/off
-const isSoundOn = window.bookApp.audio.toggleSound();
-console.log('Audio enabled:', isSoundOn);
-
-// Listen to page turns
-window.bookApp.engine.onChange = (newLocation) => {
-  console.log('User turned to spread:', newLocation);
-};
-```
-
----
-
-## Recipe 5: Handling Single Page Mode on Mobile Devices
-
-The responsive controller (`js/responsive.js`) scales the book smoothly across screen resolutions. For ultra-compact screens, you can adjust the minimum scale floor in `js/responsive.js`:
-
-```javascript
-// Allow deeper reduction on narrow mobile displays
-if (finalScale < 0.38) finalScale = 0.38;
+this.engine = new FlipEngine({
+  bookElement: this.bookElement,
+  sheets: this.sheets,
+  audio: this.audio,
+  flipDuration: 920, // Match milliseconds to --flip-duration
+  ...
+});
 ```
